@@ -1,4 +1,5 @@
 import { LoginForm } from "@/components/auth/login-form"
+import { AuthCard } from "@/components/auth/auth-card"
 import Link from "next/link"
 
 export const metadata = { title: "Iniciar sesión — CoolDesk" }
@@ -9,23 +10,10 @@ export default function LoginPage({
   searchParams: Promise<{ next?: string; error?: string }>
 }) {
   return (
-    <div className="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-brand-border p-8">
-      <div className="flex justify-center mb-6">
-        <div className="flex items-center gap-1 text-2xl font-bold tracking-tight">
-          <span className="text-brand-primary">Cool</span>
-          <span className="text-brand-text">Desk</span>
-        </div>
-      </div>
-
-      <div className="mb-6">
-        <h1 className="text-[20px] font-bold text-brand-text mb-1 leading-tight">
-          Iniciar sesión
-        </h1>
-        <p className="text-sm text-brand-text-muted font-normal">
-          Ingresa a tu espacio de trabajo.
-        </p>
-      </div>
-
+    <AuthCard
+      title="Iniciar sesión"
+      subtitle="Ingresa a tu espacio de trabajo."
+    >
       <LoginForm searchParams={searchParams} />
 
       <div className="mt-4 text-center">
@@ -56,6 +44,6 @@ export default function LoginPage({
           Regístrate
         </Link>
       </div>
-    </div>
+    </AuthCard>
   )
 }

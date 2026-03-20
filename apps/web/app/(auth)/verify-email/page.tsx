@@ -2,6 +2,7 @@ import Link from "next/link"
 import { MailCheck } from "lucide-react"
 import { buttonVariants } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { AuthCard } from "@/components/auth/auth-card"
 
 export const metadata = { title: "Verifica tu correo — CoolDesk" }
 
@@ -13,38 +14,32 @@ export default async function VerifyEmailPage({
   const { sent } = await searchParams
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 text-center">
-      <div className="flex justify-center mb-4">
-        <div className="w-14 h-14 rounded-full bg-orange-50 flex items-center justify-center">
-          <MailCheck className="w-7 h-7 text-[#F97316]" />
-        </div>
-      </div>
-
-      <h1 className="text-2xl font-semibold text-[#1C1917] mb-2">
-        {sent ? "Revisa tu correo" : "Verifica tu email"}
-      </h1>
-
-      <p className="text-sm text-gray-500 mb-6">
-        {sent
+    <AuthCard
+      title={sent ? "Revisa tu correo" : "Verifica tu email"}
+      subtitle={
+        sent
           ? "Te enviamos un enlace de verificación. Haz clic en él para activar tu cuenta."
-          : "Necesitas verificar tu email para continuar."}
-      </p>
-
+          : "Necesitas verificar tu email para continuar."
+      }
+      icon={<MailCheck className="w-7 h-7 text-brand-primary" />}
+      showLogo={false}
+      centered
+    >
       <div className="space-y-3">
         <Link
           href="/login"
           className={cn(
             buttonVariants({ variant: "default" }),
-            "w-full bg-[#F97316] hover:bg-[#ea6c0a] text-white"
+            "w-full bg-brand-primary hover:bg-brand-primary/90 text-white"
           )}
         >
           Volver al inicio de sesión
         </Link>
       </div>
 
-      <p className="text-xs text-gray-400 mt-4">
+      <p className="text-xs text-brand-text-muted mt-4 text-center">
         ¿No recibiste el correo? Revisa tu carpeta de spam.
       </p>
-    </div>
+    </AuthCard>
   )
 }
