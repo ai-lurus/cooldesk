@@ -38,7 +38,7 @@ export function Header({ user, title }: HeaderProps) {
     <header className="h-14 border-b border-gray-200 bg-white flex items-center justify-between px-6 shrink-0">
       <div className="flex items-center gap-2">
         {title && (
-          <h1 className="text-base font-semibold text-[#1C1917]">{title}</h1>
+          <h1 className="text-base font-semibold text-brand-text">{title}</h1>
         )}
       </div>
 
@@ -59,11 +59,11 @@ export function Header({ user, title }: HeaderProps) {
                 {user.avatar_url && (
                   <AvatarImage src={user.avatar_url} alt={user.name ?? user.email} />
                 )}
-                <AvatarFallback className="bg-[#F97316] text-white text-xs font-medium">
+                <AvatarFallback className="bg-brand-primary text-white text-xs font-medium">
                   {initials}
                 </AvatarFallback>
               </Avatar>
-              <span className="text-sm font-medium text-[#1C1917] hidden sm:block">
+              <span className="text-sm font-medium text-brand-text hidden sm:block">
                 {user.name ?? user.email}
               </span>
               <ChevronDown className="w-3.5 h-3.5 text-gray-400 hidden sm:block" />
@@ -71,10 +71,10 @@ export function Header({ user, title }: HeaderProps) {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-52">
             <div className="px-2 py-1.5">
-              <p className="text-sm font-medium text-[#1C1917] truncate">
+              <p className="text-sm font-medium text-brand-text truncate">
                 {user.name ?? "Sin nombre"}
               </p>
-              <p className="text-xs text-gray-500 truncate">{user.email}</p>
+              <p className="text-xs text-brand-text-muted truncate">{user.email}</p>
             </div>
             <DropdownMenuSeparator />
             <DropdownMenuItem>

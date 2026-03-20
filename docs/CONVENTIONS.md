@@ -202,15 +202,20 @@ import { formatDate } from "./utils"
 
 ## Colores y estilos
 
-```typescript
-// Usar variables CSS de marca, no valores hardcodeados
-const brandColors = {
-  primary: "#F97316",   // naranja
-  background: "#EDE8E0", // beige
-  text: "#1C1917",       // oscuro
-  ai: "#7C5CFC",         // violeta IA
-  white: "#FFFFFF",
-}
-```
+Usar variables CSS de marca definidas en `globals.css`. Evitar valores hardcodeados para mantener consistencia.
 
-Configurar en `tailwind.config.ts` como colores extendidos.
+| Variable CSS | Uso principal | Ejemplo Tailwind |
+|---|---|---|
+| `--brand-primary` | Color principal de marca, botones primarios, estados activos. | `text-brand-primary`, `bg-brand-primary` |
+| `--brand-primary-hover` | Estado hover para elementos primarios. | `hover:bg-brand-primary-hover` |
+| `--brand-background` | Fondo principal de la aplicación (layout). | `bg-brand-background` |
+| `--brand-card` | Fondo de tarjetas y contenedores elevados. | `bg-brand-card` |
+| `--brand-text` | Color de texto principal para legibilidad máxima. | `text-brand-text` |
+| `--brand-text-muted` | Texto de apoyo, placeholders, iconos secundarios. | `text-brand-text-muted` |
+| `--brand-border` | Bordes sutiles para divisiones y tarjetas. | `border-brand-border` |
+| `--brand-border-muted` | Bordes para inputs y separadores discretos. | `border-brand-border-muted` |
+| `--brand-secondary-border`| Bordes para botones secundarios (outline). | `border-brand-secondary-border` |
+| `--brand-secondary-hover` | Fondo hover para botones secundarios. | `hover:bg-brand-secondary-hover` |
+| `--brand-ai` | Color distintivo para funciones de Inteligencia Artificial. | `text-brand-ai`, `bg-brand-ai` |
+
+Configurar en `app/globals.css` dentro del bloque `@theme inline` para que estén disponibles como clases de utilidad.

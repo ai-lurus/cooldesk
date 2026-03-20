@@ -68,40 +68,46 @@ export function LoginForm({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <div className="space-y-1.5">
-        <Label htmlFor="email">Email</Label>
+      <div className="space-y-2">
+        <Label htmlFor="email" className="text-sm font-semibold text-brand-text">
+          Correo electrónico
+        </Label>
         <Input
           id="email"
           type="email"
-          placeholder="tu@email.com"
+          placeholder="tu@empresa.com"
           autoComplete="email"
+          className="h-12 border-brand-border-muted rounded-xl px-4 focus:ring-brand-primary/20 focus:border-brand-primary transition-all placeholder:text-brand-text-muted/50"
           {...register("email")}
         />
         {errors.email && (
-          <p className="text-xs text-red-500">{errors.email.message}</p>
+          <p className="text-xs text-red-500 font-medium">{errors.email.message}</p>
         )}
       </div>
 
-      <div className="space-y-1.5">
-        <Label htmlFor="password">Contraseña</Label>
+      <div className="space-y-2">
+        <Label htmlFor="password" className="text-sm font-semibold text-brand-text">
+          Contraseña
+        </Label>
         <Input
           id="password"
           type="password"
           placeholder="••••••••"
           autoComplete="current-password"
+          className="h-12 border-brand-border-muted rounded-xl px-4 focus:ring-brand-primary/20 focus:border-brand-primary transition-all placeholder:text-brand-text-muted/50"
           {...register("password")}
         />
         {errors.password && (
-          <p className="text-xs text-red-500">{errors.password.message}</p>
+          <p className="text-xs text-red-500 font-medium">{errors.password.message}</p>
         )}
       </div>
 
       <Button
         type="submit"
         disabled={loading}
-        className="w-full bg-[#F97316] hover:bg-[#ea6c0a] text-white"
+        className="w-full h-12 bg-brand-primary hover:bg-brand-primary-hover text-white font-bold rounded-xl shadow-[0_4px_12px_var(--brand-primary-shadow)] transition-all active:scale-[0.98]"
       >
-        {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+        {loading ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : null}
         Iniciar sesión
       </Button>
     </form>
