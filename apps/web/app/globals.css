@@ -60,43 +60,43 @@
 }
 
 :root {
-  /* CoolDesk brand colors */
-  --brand-primary: #F97316;
-  --brand-primary-hover: #ea6c0a;
-  --brand-primary-shadow: rgba(249, 115, 22, 0.25);
+  /* SimplyDesk brand colors */
+  --brand-primary: #FF7A30; /* Vibrant Orange */
+  --brand-primary-hover: #E86924;
+  --brand-primary-shadow: rgba(255, 122, 48, 0.2);
   
-  --brand-secondary-border: #FFEDD5; /* orange-100 */
-  --brand-secondary-hover: rgba(255, 237, 213, 0.5); /* orange-50/50 */
+  --brand-secondary-border: #F3F4F6;
+  --brand-secondary-hover: #F9FAFB;
   
-  --brand-background: #EDE8E0;
+  --brand-background: #FDFCFB; /* Very light warm off-white */
   --brand-card: #FFFFFF;
-  --brand-border: #F3F4F6; /* gray-100 */
-  --brand-border-muted: #E5E7EB; /* gray-200 */
+  --brand-border: #F1F0EE;
+  --brand-border-muted: #E5E7EB;
   
-  --brand-text: #1C1917;
-  --brand-text-muted: #6B7280; /* gray-500 */
+  --brand-text: #1A1A1A;
+  --brand-text-muted: #666666;
   
   --brand-ai: #7C5CFC;
   --brand-white: #FFFFFF;
 
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  --background: #FDFCFB;
+  --foreground: #1A1A1A;
+  --card: #FFFFFF;
+  --card-foreground: #1A1A1A;
+  --popover: #FFFFFF;
+  --popover-foreground: #1A1A1A;
+  --primary: #FF7A30;
+  --primary-foreground: #FFFFFF;
+  --secondary: #F3F4F6;
+  --secondary-foreground: #1A1A1A;
+  --muted: #F9FAFB;
+  --muted-foreground: #666666;
+  --accent: #F3F4F6;
+  --accent-foreground: #1A1A1A;
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --border: #F1F0EE;
+  --input: #F1F0EE;
+  --ring: rgba(255, 122, 48, 0.2);
   --chart-1: oklch(0.809 0.105 251.813);
   --chart-2: oklch(0.623 0.214 259.815);
   --chart-3: oklch(0.546 0.245 262.881);

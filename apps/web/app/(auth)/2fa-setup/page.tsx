@@ -4,7 +4,7 @@ import { createServerClient } from "@/lib/supabase/server"
 import { TotpSetupForm } from "@/components/auth/totp-setup-form"
 import { AuthCard } from "@/components/auth/auth-card"
 
-export const metadata = { title: "Configurar autenticación — CoolDesk" }
+export const metadata = { title: "Configurar autenticación — SimplyDesk" }
 
 export default async function TwoFactorSetupPage() {
   const supabase = await createServerClient()
@@ -19,9 +19,6 @@ export default async function TwoFactorSetupPage() {
     <AuthCard
       title="Configurar autenticación en dos pasos"
       subtitle="Usa una app como Google Authenticator, Authy o 1Password para mayor seguridad."
-      icon={<ShieldCheck className="w-7 h-7 text-brand-primary" />}
-      showLogo={false}
-      centered
     >
       <TotpSetupForm />
     </AuthCard>

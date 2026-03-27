@@ -21,9 +21,6 @@ export default async function VerifyEmailPage({
           ? "Te enviamos un enlace de verificación. Haz clic en él para activar tu cuenta."
           : "Necesitas verificar tu email para continuar."
       }
-      icon={<MailCheck className="w-7 h-7 text-brand-primary" />}
-      showLogo={false}
-      centered
     >
       <div className="space-y-3">
         <Link

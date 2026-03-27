@@ -2,7 +2,7 @@ import { ForgotPasswordForm } from "@/components/auth/forgot-password-form"
 import { AuthCard } from "@/components/auth/auth-card"
 import Link from "next/link"
 
-export const metadata = { title: "Recuperar contraseña — CoolDesk" }
+export const metadata = { title: "Recuperar contraseña — SimplyDesk" }
 
 export default function ForgotPasswordPage() {
   return (
