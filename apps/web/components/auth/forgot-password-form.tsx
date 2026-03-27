@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { createClient } from "@/lib/supabase/client"
+import { ArrowRight, ArrowLeft } from "lucide-react"
+import Link from "next/link"
 
 const schema = z.object({
   email: z.string().email("Email inválido"),
@@ -59,29 +61,51 @@ export function ForgotPasswordForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <div className="space-y-1.5">
-        <Label htmlFor="email">Email</Label>
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <div className="space-y-2.5">
+        <Label 
+          htmlFor="email" 
+          className="text-[10px] font-bold tracking-widest text-brand-text-muted uppercase ml-1"
+        >
+          Correo electrónico
+        </Label>
         <Input
           id="email"
           type="email"
-          placeholder="tu@email.com"
+          placeholder="tu@empresa.com"
           autoComplete="email"
+          className="h-12 bg-[#F8F7F5] border-none rounded-xl px-4 text-brand-text placeholder:text-brand-text-muted/40 focus-visible:ring-1 focus-visible:ring-brand-primary/20"
           {...register("email")}
         />
         {errors.email && (
-          <p className="text-xs text-red-500">{errors.email.message}</p>
+          <p className="text-xs text-red-500 ml-1">{errors.email.message}</p>
         )}
       </div>
 
       <Button
         type="submit"
         disabled={loading}
-        className="w-full bg-[#F97316] hover:bg-[#ea6c0a] text-white"
+        className="w-full h-12 bg-brand-primary hover:bg-brand-primary-hover text-white rounded-xl font-bold text-[14px] shadow-[0_8px_16px_-4px_rgba(249,115,22,0.2)]"
       >
-        {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
-        Enviar enlace
+        {loading ? (
+          <Loader2 className="w-4 h-4 animate-spin mr-2" />
+        ) : (
+          <>
+            Enviar enlace
+            <ArrowRight className="w-4 h-4 ml-2" />
+          </>
+        )}
       </Button>
+
+      <div className="pt-4 flex justify-center border-t border-brand-border/50 mt-2">
+        <Link
+          href="/login"
+          className="inline-flex items-center gap-2 text-[13px] font-bold text-brand-primary hover:opacity-80 transition-opacity"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Volver al inicio de sesión
+        </Link>
+      </div>
     </form>
   )
 }

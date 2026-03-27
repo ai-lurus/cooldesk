@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { createClient } from "@/lib/supabase/client"
+import Link from "next/link"
 
 const schema = z.object({
   name: z.string().min(2, "Nombre muy corto").max(255),
@@ -65,75 +66,101 @@ export function RegisterForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <div className="space-y-1.5">
-        <Label htmlFor="name">Nombre completo</Label>
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+      <div className="space-y-2">
+        <Label 
+          htmlFor="name" 
+          className="text-[10px] uppercase font-bold tracking-widest text-brand-text mb-2 block"
+        >
+          Nombre completo
+        </Label>
         <Input
           id="name"
-          placeholder="Tu nombre"
+          placeholder="Juan Pérez"
           autoComplete="name"
+          className="bg-[#F5F5F5] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-brand-primary/20"
           {...register("name")}
         />
         {errors.name && (
-          <p className="text-xs text-red-500">{errors.name.message}</p>
+          <p className="text-[11px] text-red-500 font-medium px-1 mt-1">{errors.name.message}</p>
         )}
       </div>
 
-      <div className="space-y-1.5">
-        <Label htmlFor="email">Email</Label>
+      <div className="space-y-2">
+        <Label 
+          htmlFor="email" 
+          className="text-[10px] uppercase font-bold tracking-widest text-brand-text mb-2 block"
+        >
+          Correo electrónico
+        </Label>
         <Input
           id="email"
           type="email"
-          placeholder="tu@email.com"
+          placeholder="john@cooldesk.com"
           autoComplete="email"
+          className="bg-[#F5F5F5] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-brand-primary/20"
           {...register("email")}
         />
         {errors.email && (
-          <p className="text-xs text-red-500">{errors.email.message}</p>
+          <p className="text-[11px] text-red-500 font-medium px-1 mt-1">{errors.email.message}</p>
         )}
       </div>
 
-      <div className="space-y-1.5">
-        <Label htmlFor="password">Contraseña</Label>
-        <Input
-          id="password"
-          type="password"
-          placeholder="Mín. 8 caracteres"
-          autoComplete="new-password"
-          {...register("password")}
-        />
-        {errors.password && (
-          <p className="text-xs text-red-500">{errors.password.message}</p>
-        )}
-      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label 
+            htmlFor="password" 
+            className="text-[10px] uppercase font-bold tracking-widest text-brand-text mb-2 block"
+          >
+            Contraseña
+          </Label>
+          <Input
+            id="password"
+            type="password"
+            placeholder="••••••••"
+            autoComplete="new-password"
+            className="bg-[#F5F5F5] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-brand-primary/20"
+            {...register("password")}
+          />
+          {errors.password && (
+            <p className="text-[11px] text-red-500 font-medium px-1 mt-1">{errors.password.message}</p>
+          )}
+        </div>
 
-      <div className="space-y-1.5">
-        <Label htmlFor="confirmPassword">Confirmar contraseña</Label>
-        <Input
-          id="confirmPassword"
-          type="password"
-          placeholder="Repite tu contraseña"
-          autoComplete="new-password"
-          {...register("confirmPassword")}
-        />
-        {errors.confirmPassword && (
-          <p className="text-xs text-red-500">{errors.confirmPassword.message}</p>
-        )}
+        <div className="space-y-2">
+          <Label 
+            htmlFor="confirmPassword" 
+            className="text-[10px] uppercase font-bold tracking-widest text-brand-text mb-2 block"
+          >
+            Confirmar
+          </Label>
+          <Input
+            id="confirmPassword"
+            type="password"
+            placeholder="••••••••"
+            autoComplete="new-password"
+            className="bg-[#F5F5F5] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-brand-primary/20"
+            {...register("confirmPassword")}
+          />
+          {errors.confirmPassword && (
+            <p className="text-[11px] text-red-500 font-medium px-1 mt-1">{errors.confirmPassword.message}</p>
+          )}
+        </div>
       </div>
 
       <Button
         type="submit"
         disabled={loading}
-        className="w-full bg-[#F97316] hover:bg-[#ea6c0a] text-white"
+        className="w-full bg-brand-primary hover:bg-brand-primary-hover text-white rounded-xl h-12 font-bold transition-all shadow-lg shadow-brand-primary/20"
       >
         {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
         Crear cuenta
       </Button>
 
-      <p className="text-xs text-gray-400 text-center">
-        Al crear tu cuenta aceptas nuestros{" "}
-        <span className="underline cursor-pointer">Términos de uso</span> y{" "}
-        <span className="underline cursor-pointer">Política de privacidad</span>.
+      <p className="text-[9px] text-[#B3B3B3] text-center font-bold tracking-widest uppercase py-4">
+        Al crear una cuenta, aceptas nuestros{" "}
+        <Link href="/terms" className="underline hover:text-brand-text transition-colors">Términos de servicio</Link> &{" "}
+        <Link href="/privacy" className="underline hover:text-brand-text transition-colors">Política de privacidad</Link>
       </p>
     </form>
   )
