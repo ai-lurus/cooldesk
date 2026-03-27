@@ -10,7 +10,7 @@ export default function LoginPage({
   searchParams: Promise<{ next?: string; error?: string }>
 }) {
   return (
-    <AuthLayout>
+    <AuthLayout singleCard={true}>
       <AuthCard
         title="Iniciar sesión"
         subtitle="Bienvenido de nuevo a la gestión inteligente."
