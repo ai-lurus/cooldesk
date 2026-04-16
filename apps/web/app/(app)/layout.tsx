@@ -40,14 +40,8 @@ export default async function AppLayout({
 
   const workspaces = memberships.map((m) => m.workspace)
 
-  // If no workspace, redirect to onboarding
   const headersList = await headers()
   const pathname = headersList.get("x-pathname") ?? ""
-  const isOnboarding = pathname.startsWith("/onboarding")
-
-  if (workspaces.length === 0 && !isOnboarding) {
-    redirect("/onboarding")
-  }
 
   const workspace = workspaces[0] as { id: string; name: string; slug: string } | undefined
 
