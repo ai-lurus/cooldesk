@@ -1,8 +1,10 @@
 "use server"
 
 import { redirect } from "next/navigation"
+import { headers } from "next/headers"
 import { z } from "zod"
-import { createServerClient } from "@/lib/supabase/server"
+import { auth } from "@/lib/auth"
+import { db } from "@/lib/db"
 
 const workspaceSchema = z.object({
   name: z.string().min(2, "Mínimo 2 caracteres").max(50),
@@ -25,13 +27,11 @@ const inviteSchema = z.object({
 })
 
 export async function createWorkspace(formData: FormData) {
-  const supabase = await createServerClient()
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  })
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) redirect("/login")
+  if (!session) redirect("/login")
 
   const parsed = workspaceSchema.safeParse({
     name: formData.get("name"),
@@ -45,52 +45,48 @@ export async function createWorkspace(formData: FormData) {
   const { name, slug } = parsed.data
 
   // Check slug uniqueness
-  const { data: existing } = await supabase
-    .from("workspaces")
-    .select("id")
-    .eq("slug", slug)
-    .maybeSingle()
+  const existing = await db.workspace.findUnique({
+    where: { slug },
+    select: { id: true },
+  })
 
   if (existing) {
     return { error: "Ese slug ya está en uso. Elige otro." }
   }
 
   // Create workspace
-  const { data: workspace, error: wsError } = await supabase
-    .from("workspaces")
-    .insert({ name, slug, owner_id: user.id })
-    .select("id")
-    .single()
+  const workspace = await db.workspace.create({
+    data: {
+      name,
+      slug,
+      ownerId: session.user.id,
+    },
+    select: { id: true },
+  })
 
-  if (wsError || !workspace) {
-    return { error: "Error al crear el workspace. Intenta de nuevo." }
-  }
-
-  // Add owner as admin member
-  const { error: memberError } = await supabase
-    .from("workspace_members")
-    .insert({ workspace_id: workspace.id, user_id: user.id, role: "owner" })
-
-  if (memberError) {
-    return { error: "Error al configurar el workspace." }
-  }
+  // Add owner as member
+  await db.workspaceMember.create({
+    data: {
+      workspaceId: workspace.id,
+      userId: session.user.id,
+      role: "owner",
+    },
+  })
 
   return { workspaceId: workspace.id }
 }
 
 export async function inviteMembers(formData: FormData) {
-  const supabase = await createServerClient()
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  })
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) redirect("/login")
+  if (!session) redirect("/login")
 
   const parsed = inviteSchema.safeParse({
     emails: formData.get("emails"),
     workspaceId: formData.get("workspaceId"),
-    role: formData.get("role") ?? "member",
+    role: formData.get("role") ?? "editor",
   })
 
   if (!parsed.success) {
@@ -110,15 +106,19 @@ export async function inviteMembers(formData: FormData) {
 
   // Upsert invitations
   const invitations = emailList.map((email) => ({
-    workspace_id: workspaceId,
+    workspaceId,
     email,
     role: role as "admin" | "editor" | "viewer",
-    invited_by: user.id,
+    invitedBy: session.user.id,
+    expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
   }))
 
-  const { error } = await supabase.from("invitations").insert(invitations)
-
-  if (error) {
+  try {
+    await db.invitation.createMany({
+      data: invitations,
+      skipDuplicates: true,
+    })
+  } catch {
     return { error: "Error al crear las invitaciones." }
   }
 
@@ -128,13 +128,11 @@ export async function inviteMembers(formData: FormData) {
 }
 
 export async function createFirstProject(formData: FormData) {
-  const supabase = await createServerClient()
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  })
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) redirect("/login")
+  if (!session) redirect("/login")
 
   const parsed = projectSchema.safeParse({
     name: formData.get("name"),
@@ -147,19 +145,18 @@ export async function createFirstProject(formData: FormData) {
 
   const { name, workspaceId } = parsed.data
 
-  const { data: project, error } = await supabase
-    .from("projects")
-    .insert({
-      workspace_id: workspaceId,
-      name,
-      created_by: user.id,
+  try {
+    const project = await db.project.create({
+      data: {
+        workspaceId,
+        name,
+        createdById: session.user.id,
+      },
+      select: { id: true },
     })
-    .select("id")
-    .single()
 
-  if (error || !project) {
+    return { projectId: project.id }
+  } catch {
     return { error: "Error al crear el proyecto." }
   }
-
-  return { projectId: project.id }
 }

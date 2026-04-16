@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation"
 import { headers } from "next/headers"
-import { createServerClient } from "@/lib/supabase/server"
+import { auth } from "@/lib/auth"
+import { db } from "@/lib/db"
 import { Sidebar } from "@/components/layout/sidebar"
 import { Header } from "@/components/layout/header"
 
@@ -9,35 +10,35 @@ export default async function AppLayout({
 }: {
   children: React.ReactNode
 }) {
-  const supabase = await createServerClient()
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  })
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) {
+  if (!session) {
     redirect("/login")
   }
 
+  const user = session.user
+
   // Fetch user profile
-  const { data: profile } = await supabase
-    .from("users")
-    .select("id, name, email, avatar_url")
-    .eq("id", user.id)
-    .single()
+  const profile = await db.user.findUnique({
+    where: { id: user.id },
+    select: { id: true, name: true, email: true, image: true },
+  })
 
   // Fetch user workspaces
-  const { data: memberships } = await supabase
-    .from("workspace_members")
-    .select("workspace_id, workspaces(id, name, slug)")
-    .eq("user_id", user.id)
-    .order("invited_at", { ascending: true })
-    .limit(10)
+  const memberships = await db.workspaceMember.findMany({
+    where: { userId: user.id },
+    include: {
+      workspace: {
+        select: { id: true, name: true, slug: true },
+      },
+    },
+    orderBy: { invitedAt: "asc" },
+    take: 10,
+  })
 
-  const workspaces =
-    memberships
-      ?.map((m) => (Array.isArray(m.workspaces) ? m.workspaces[0] : m.workspaces))
-      .filter(Boolean) ?? []
+  const workspaces = memberships.map((m) => m.workspace)
 
   // If no workspace, redirect to onboarding
   const headersList = await headers()
@@ -51,18 +52,18 @@ export default async function AppLayout({
   const workspace = workspaces[0] as { id: string; name: string; slug: string } | undefined
 
   // Fetch projects for the current workspace
-  const { data: projects } = workspace
-    ? await supabase
-        .from("projects")
-        .select("id, name")
-        .eq("workspace_id", workspace.id)
-        .order("created_at", { ascending: true })
-    : { data: [] }
+  const projects = workspace
+    ? await db.project.findMany({
+        where: { workspaceId: workspace.id },
+        select: { id: true, name: true },
+        orderBy: { createdAt: "asc" },
+      })
+    : []
 
   const userDisplay = {
     name: profile?.name ?? null,
     email: profile?.email ?? user.email ?? "",
-    avatar_url: profile?.avatar_url ?? null,
+    avatar_url: profile?.image ?? null,
   }
 
   return (
@@ -70,7 +71,7 @@ export default async function AppLayout({
       {workspace ? (
         <Sidebar
           workspace={workspace}
-          projects={projects ?? []}
+          projects={projects}
           currentPath={pathname}
         />
       ) : null}

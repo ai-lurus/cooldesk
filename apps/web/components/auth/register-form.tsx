@@ -10,7 +10,7 @@ import { Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { createClient } from "@/lib/supabase/client"
+import { authClient } from "@/lib/auth-client"
 import Link from "next/link"
 
 const schema = z.object({
@@ -41,20 +41,16 @@ export function RegisterForm() {
 
   async function onSubmit(data: FormData) {
     setLoading(true)
-    const supabase = createClient()
-
-    const { error } = await supabase.auth.signUp({
+    const { error } = await authClient.signUp.email({
       email: data.email,
       password: data.password,
-      options: {
-        data: { name: data.name },
-        emailRedirectTo: `${location.origin}/verify-email`,
-      },
+      name: data.name,
+      callbackURL: "/dashboard"
     })
 
     if (error) {
       setLoading(false)
-      if (error.message.includes("already registered")) {
+      if (error.message?.includes("already registered") || error.code === "USER_ALREADY_EXISTS") {
         toast.error("Este email ya está registrado")
       } else {
         toast.error("Error al crear la cuenta. Intenta de nuevo.")

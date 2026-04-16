@@ -10,8 +10,7 @@ import { Loader2, Eye, EyeOff } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { createClient } from "@/lib/supabase/client"
-import Image from "next/image"
+import { authClient } from "@/lib/auth-client"
 
 const schema = z.object({
   email: z.string().email("Email inválido"),
@@ -37,34 +36,39 @@ export function LoginForm({
 
   async function onSubmit(data: FormData) {
     setLoading(true)
-    const supabase = createClient()
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email: data.email,
-      password: data.password,
-    })
+    const { error } = await authClient.signIn.email(
+      {
+        email: data.email,
+        password: data.password,
+      },
+      {
+        onSuccess: async (ctx) => {
+          // Better Auth + twoFactorClient plugin handles 2FA redirect automatically
+          // via the twoFactorPage config. If 2FA is not required, redirect normally.
+          if (ctx.data.twoFactorRedirect) {
+            // The plugin auto-redirects, but just in case:
+            router.push("/2fa")
+            return
+          }
+          const params = await searchParams
+          router.push(params.next ?? "/dashboard")
+          router.refresh()
+        },
+      }
+    )
 
     if (error) {
       setLoading(false)
-      if (error.message.includes("Invalid login credentials")) {
+      if (error.message?.includes("Invalid") || error.message?.includes("credentials")) {
         toast.error("Email o contraseña incorrectos")
-      } else if (error.message.includes("Email not confirmed")) {
+      } else if (error.message?.includes("verified") || error.status === 403) {
         toast.error("Verifica tu email antes de iniciar sesión")
       } else {
         toast.error("Error al iniciar sesión. Intenta de nuevo.")
       }
       return
     }
-
-    const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel()
-    if (aal?.nextLevel === "aal2" && aal.nextLevel !== aal.currentLevel) {
-      router.push("/2fa")
-      return
-    }
-
-    const params = await searchParams
-    router.push(params.next ?? "/dashboard")
-    router.refresh()
   }
 
   return (

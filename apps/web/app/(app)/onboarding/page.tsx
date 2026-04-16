@@ -1,25 +1,23 @@
 import { redirect } from "next/navigation"
-import { createServerClient } from "@/lib/supabase/server"
+import { headers } from "next/headers"
+import { auth } from "@/lib/auth"
+import { db } from "@/lib/db"
 import { OnboardingFlow } from "./onboarding-flow"
 
 export const metadata = { title: "Bienvenido a CoolDesk" }
 
 export default async function OnboardingPage() {
-  const supabase = await createServerClient()
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  })
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) redirect("/login")
+  if (!session) redirect("/login")
 
   // If user already has a workspace, go to dashboard
-  const { data: membership } = await supabase
-    .from("workspace_members")
-    .select("workspace_id")
-    .eq("user_id", user.id)
-    .limit(1)
-    .maybeSingle()
+  const membership = await db.workspaceMember.findFirst({
+    where: { userId: session.user.id },
+    select: { workspaceId: true },
+  })
 
   if (membership) redirect("/dashboard")
 

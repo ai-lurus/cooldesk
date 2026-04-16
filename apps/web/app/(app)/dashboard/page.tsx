@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation"
+import { headers } from "next/headers"
 import Link from "next/link"
-import { createServerClient } from "@/lib/supabase/server"
+import { auth } from "@/lib/auth"
+import { db } from "@/lib/db"
 import { FolderKanban, Plus, Clock, AlertCircle } from "lucide-react"
 import { buttonVariants } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -10,49 +12,56 @@ import { cn } from "@/lib/utils"
 export const metadata = { title: "Inicio — CoolDesk" }
 
 export default async function DashboardPage() {
-  const supabase = await createServerClient()
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  })
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  if (!session) redirect("/login")
 
-  if (!user) redirect("/login")
+  const userId = session.user.id
 
-  const { data: profile } = await supabase
-    .from("users")
-    .select("name")
-    .eq("id", user.id)
-    .single()
+  const profile = await db.user.findUnique({
+    where: { id: userId },
+    select: { name: true },
+  })
 
-  const { data: memberships } = await supabase
-    .from("workspace_members")
-    .select("workspace_id, workspaces(id, name)")
-    .eq("user_id", user.id)
-    .limit(1)
-    .single()
+  const membership = await db.workspaceMember.findFirst({
+    where: { userId },
+    include: {
+      workspace: { select: { id: true, name: true } },
+    },
+  })
 
-  const workspace = Array.isArray(memberships?.workspaces)
-    ? memberships.workspaces[0]
-    : memberships?.workspaces
-
+  const workspace = membership?.workspace
   if (!workspace) redirect("/onboarding")
 
-  const { data: projects } = await supabase
-    .from("projects")
-    .select("id, name, description, created_at")
-    .eq("workspace_id", workspace.id)
-    .order("created_at", { ascending: false })
-    .limit(6)
+  const projects = await db.project.findMany({
+    where: { workspaceId: workspace.id },
+    select: { id: true, name: true, description: true, createdAt: true },
+    orderBy: { createdAt: "desc" },
+    take: 6,
+  })
 
   // Assigned tasks due today or overdue
-  const today = new Date().toISOString().split("T")[0]
-  const { data: urgentTasks } = await supabase
-    .from("tasks")
-    .select("id, title, due_date, priority, projects(name)")
-    .eq("assigned_to", user.id)
-    .lte("due_date", today)
-    .order("due_date", { ascending: true })
-    .limit(5)
+  const today = new Date()
+  today.setHours(23, 59, 59, 999)
+  const todayStr = new Date().toISOString().split("T")[0]
+
+  const urgentTasks = await db.task.findMany({
+    where: {
+      assignedTo: userId,
+      dueDate: { lte: today },
+    },
+    select: {
+      id: true,
+      title: true,
+      dueDate: true,
+      priority: true,
+      project: { select: { name: true } },
+    },
+    orderBy: { dueDate: "asc" },
+    take: 5,
+  })
 
   const greeting = getGreeting(profile?.name)
 
@@ -74,18 +83,18 @@ export default async function DashboardPage() {
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
         <StatCard
           label="Proyectos"
-          value={projects?.length ?? 0}
+          value={projects.length}
           icon={<FolderKanban className="w-5 h-5 text-[#F97316]" />}
         />
         <StatCard
           label="Tareas vencidas"
-          value={urgentTasks?.length ?? 0}
+          value={urgentTasks.length}
           icon={<AlertCircle className="w-5 h-5 text-red-500" />}
-          alert={!!urgentTasks?.length}
+          alert={urgentTasks.length > 0}
         />
         <StatCard
           label="Vencen hoy"
-          value={urgentTasks?.filter((t) => t.due_date === today).length ?? 0}
+          value={urgentTasks.filter((t) => t.dueDate?.toISOString().split("T")[0] === todayStr).length}
           icon={<Clock className="w-5 h-5 text-amber-500" />}
         />
       </div>
@@ -106,7 +115,7 @@ export default async function DashboardPage() {
           </Link>
         </div>
 
-        {projects && projects.length > 0 ? (
+        {projects.length > 0 ? (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {projects.map((project) => (
               <Link key={project.id} href={`/projects/${project.id}`}>
@@ -151,17 +160,15 @@ export default async function DashboardPage() {
       </section>
 
       {/* Urgent tasks */}
-      {urgentTasks && urgentTasks.length > 0 && (
+      {urgentTasks.length > 0 && (
         <section>
           <h2 className="text-base font-semibold text-[#1C1917] mb-3">
             Requieren atención
           </h2>
           <div className="space-y-2">
             {urgentTasks.map((task) => {
-              const isOverdue = (task.due_date ?? "") < today
-              const projectName = Array.isArray(task.projects)
-                ? task.projects[0]?.name
-                : (task.projects as { name: string } | null)?.name
+              const dueDateStr = task.dueDate?.toISOString().split("T")[0] ?? ""
+              const isOverdue = dueDateStr < todayStr
 
               return (
                 <Card key={task.id} className="p-3 flex items-center gap-3">
@@ -169,8 +176,8 @@ export default async function DashboardPage() {
                     <p className="text-sm font-medium text-[#1C1917] truncate">
                       {task.title}
                     </p>
-                    {projectName && (
-                      <p className="text-xs text-gray-500">{projectName}</p>
+                    {task.project?.name && (
+                      <p className="text-xs text-gray-500">{task.project.name}</p>
                     )}
                   </div>
                   <div className="flex items-center gap-2 shrink-0">

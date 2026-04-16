@@ -1,10 +1,9 @@
 "use server"
 
 import { redirect } from "next/navigation"
-import { createServerClient } from "@/lib/supabase/server"
 
 export async function logout() {
-  const supabase = await createServerClient()
-  await supabase.auth.signOut()
+  // Better Auth handles logout via the client-side authClient.signOut()
+  // This server action is kept as a fallback redirect only
   redirect("/login")
 }

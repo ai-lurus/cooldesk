@@ -1,19 +1,17 @@
 import { redirect } from "next/navigation"
-import { ShieldCheck } from "lucide-react"
-import { createServerClient } from "@/lib/supabase/server"
+import { headers } from "next/headers"
+import { auth } from "@/lib/auth"
 import { TotpSetupForm } from "@/components/auth/totp-setup-form"
 import { AuthCard } from "@/components/auth/auth-card"
 
-export const metadata = { title: "Configurar autenticación — SimplyDesk" }
+export const metadata = { title: "Configurar autenticación — CoolDesk" }
 
 export default async function TwoFactorSetupPage() {
-  const supabase = await createServerClient()
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  })
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) redirect("/login")
+  if (!session) redirect("/login")
 
   return (
     <AuthCard

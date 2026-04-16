@@ -1,7 +1,7 @@
 # API Spec — CoolDesk
 
 API RESTful implementada como Route Handlers de Next.js.
-Base URL: `/api/v1`. Autenticación vía Bearer token (JWT de Supabase). Todas las respuestas en JSON.
+Base URL: `/api/v1`. Autenticación vía Better Auth. Todas las respuestas en JSON.
 
 ## Formato de respuesta estándar
 
@@ -15,7 +15,7 @@ Base URL: `/api/v1`. Autenticación vía Bearer token (JWT de Supabase). Todas l
 
 ## 8.1 Autenticación
 
-Manejada principalmente por Supabase Auth. Los endpoints propios del servidor son wrappers.
+Manejada por Better Auth.
 
 | Método | Ruta | Body | Respuesta | Auth |
 |---|---|---|---|---|

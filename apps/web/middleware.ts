@@ -1,38 +1,16 @@
-import { createServerClient } from "@supabase/ssr"
 import { NextResponse, type NextRequest } from "next/server"
 
 export async function middleware(request: NextRequest) {
-  let supabaseResponse = NextResponse.next({ request })
-
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll()
-        },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) =>
-            request.cookies.set(name, value)
-          )
-          supabaseResponse = NextResponse.next({ request })
-          cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
-          )
-        },
-      },
-    }
-  )
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  // Check for the better-auth session cookie
+  // Note: Depending on environment (HTTP vs HTTPS), it might be "__Secure-better-auth.session_token"
+  // For basic middleware checks, it's often sufficient to check either.
+  const sessionToken = request.cookies.get("better-auth.session_token") || request.cookies.get("__Secure-better-auth.session_token")
 
   const { pathname } = request.nextUrl
 
   // Rutas públicas — no requieren sesión
   const isPublicRoute =
+    pathname.startsWith("/api/auth") ||
     pathname.startsWith("/login") ||
     pathname.startsWith("/register") ||
     pathname.startsWith("/forgot-password") ||
@@ -40,23 +18,24 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith("/verify-email") ||
     pathname === "/"
 
-  if (!user && !isPublicRoute) {
+  if (!sessionToken && !isPublicRoute) {
     const loginUrl = request.nextUrl.clone()
     loginUrl.pathname = "/login"
     loginUrl.searchParams.set("next", pathname)
     return NextResponse.redirect(loginUrl)
   }
 
-  if (user && (pathname === "/login" || pathname === "/register")) {
+  if (sessionToken && (pathname === "/login" || pathname === "/register")) {
     const dashboardUrl = request.nextUrl.clone()
     dashboardUrl.pathname = "/dashboard"
     return NextResponse.redirect(dashboardUrl)
   }
 
+  const response = NextResponse.next()
   // Forward pathname as header so Server Component layouts can read it
-  supabaseResponse.headers.set("x-pathname", pathname)
+  response.headers.set("x-pathname", pathname)
 
-  return supabaseResponse
+  return response
 }
 
 export const config = {

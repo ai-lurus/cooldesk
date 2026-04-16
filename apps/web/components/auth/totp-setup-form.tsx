@@ -1,17 +1,16 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { toast } from "sonner"
-import { Loader2, ShieldCheck } from "lucide-react"
-import Image from "next/image"
+import { Loader2, ShieldCheck, Copy, Check } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { createClient } from "@/lib/supabase/client"
+import { authClient } from "@/lib/auth-client"
 
 const schema = z.object({
   code: z
@@ -23,15 +22,23 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>
 
 type EnrollState =
+  | { status: "password" }
   | { status: "loading" }
-  | { status: "ready"; factorId: string; qrCode: string; secret: string }
+  | { status: "ready"; totpURI: string; secret: string; backupCodes: string[] }
   | { status: "error"; message: string }
+
+function extractSecretFromURI(uri: string): string {
+  const match = uri.match(/secret=([^&]+)/)
+  return match ? match[1] : uri
+}
 
 export function TotpSetupForm() {
   const router = useRouter()
-  const [enrollState, setEnrollState] = useState<EnrollState>({ status: "loading" })
+  const [enrollState, setEnrollState] = useState<EnrollState>({ status: "password" })
   const [submitting, setSubmitting] = useState(false)
-  const [showSecret, setShowSecret] = useState(false)
+  const [copied, setCopied] = useState(false)
+  const [password, setPassword] = useState("")
+  const [passwordLoading, setPasswordLoading] = useState(false)
 
   const {
     register,
@@ -40,53 +47,50 @@ export function TotpSetupForm() {
     setError,
   } = useForm<FormData>({ resolver: zodResolver(schema) })
 
-  useEffect(() => {
-    async function enroll() {
-      const supabase = createClient()
+  async function startEnroll() {
+    if (!password) {
+      toast.error("Ingresa tu contraseña para continuar")
+      return
+    }
+    setPasswordLoading(true)
 
-      const { data, error } = await supabase.auth.mfa.enroll({
-        factorType: "totp",
-        friendlyName: "CoolDesk",
-      })
+    const { data, error } = await authClient.twoFactor.enable({
+      password,
+    })
 
-      if (error || !data) {
-        setEnrollState({ status: "error", message: "No se pudo iniciar la configuración." })
-        return
-      }
-
-      setEnrollState({
-        status: "ready",
-        factorId: data.id,
-        qrCode: data.totp.qr_code,
-        secret: data.totp.secret,
-      })
+    if (error || !data) {
+      setPasswordLoading(false)
+      toast.error(error?.message ?? "No se pudo iniciar la configuración.")
+      return
     }
 
-    enroll()
-  }, [])
+    setEnrollState({
+      status: "ready",
+      totpURI: data.totpURI,
+      secret: extractSecretFromURI(data.totpURI),
+      backupCodes: data.backupCodes ?? [],
+    })
+    setPasswordLoading(false)
+  }
+
+  async function copySecret() {
+    if (enrollState.status !== "ready") return
+    await navigator.clipboard.writeText(enrollState.secret)
+    setCopied(true)
+    toast.success("Clave copiada al portapapeles")
+    setTimeout(() => setCopied(false), 2000)
+  }
 
   async function onSubmit(data: FormData) {
     if (enrollState.status !== "ready") return
 
     setSubmitting(true)
-    const supabase = createClient()
 
-    const { data: challenge, error: challengeError } =
-      await supabase.auth.mfa.challenge({ factorId: enrollState.factorId })
-
-    if (challengeError || !challenge) {
-      toast.error("Error al verificar. Intenta de nuevo.")
-      setSubmitting(false)
-      return
-    }
-
-    const { error: verifyError } = await supabase.auth.mfa.verify({
-      factorId: enrollState.factorId,
-      challengeId: challenge.id,
+    const { error } = await authClient.twoFactor.verifyTotp({
       code: data.code,
     })
 
-    if (verifyError) {
+    if (error) {
       setSubmitting(false)
       setError("code", { message: "Código incorrecto. Intenta de nuevo." })
       return
@@ -95,6 +99,41 @@ export function TotpSetupForm() {
     toast.success("Autenticación de dos factores activada")
     router.push("/settings/security")
     router.refresh()
+  }
+
+  // Step 0 — Enter password to start enrollment
+  if (enrollState.status === "password") {
+    return (
+      <div className="space-y-4">
+        <p className="text-sm text-[#1C1917]">
+          Para configurar la autenticación en dos pasos, primero confirma tu contraseña.
+        </p>
+        <div className="space-y-1.5">
+          <Label htmlFor="enroll-password">Contraseña actual</Label>
+          <Input
+            id="enroll-password"
+            type="password"
+            placeholder="Ingresa tu contraseña"
+            autoComplete="current-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && startEnroll()}
+          />
+        </div>
+        <Button
+          onClick={startEnroll}
+          disabled={passwordLoading || !password}
+          className="w-full bg-[#F97316] hover:bg-[#ea6c0a] text-white"
+        >
+          {passwordLoading ? (
+            <Loader2 className="w-4 h-4 animate-spin mr-2" />
+          ) : (
+            <ShieldCheck className="w-4 h-4 mr-2" />
+          )}
+          Continuar
+        </Button>
+      </div>
+    )
   }
 
   if (enrollState.status === "loading") {
@@ -113,37 +152,50 @@ export function TotpSetupForm() {
 
   return (
     <div className="space-y-6">
-      {/* Step 1 — Scan QR */}
+      {/* Step 1 — Copy secret key */}
       <div>
         <p className="text-sm font-medium text-[#1C1917] mb-3">
-          1. Escanea el código QR con tu app de autenticación
+          1. Copia esta clave en tu app de autenticación
         </p>
-        <div className="flex justify-center">
-          <div className="p-3 bg-white border border-gray-200 rounded-xl inline-block">
-            <Image
-              src={enrollState.qrCode}
-              alt="QR code para autenticador TOTP"
-              width={160}
-              height={160}
-              unoptimized
-            />
-          </div>
-        </div>
-        <div className="mt-3 text-center">
-          <button
-            type="button"
-            onClick={() => setShowSecret((v) => !v)}
-            className="text-xs text-gray-500 hover:text-[#F97316] transition-colors"
-          >
-            {showSecret ? "Ocultar clave manual" : "¿No puedes escanear? Ver clave manual"}
-          </button>
-          {showSecret && (
-            <p className="mt-2 text-xs font-mono bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-gray-700 break-all">
+        <p className="text-xs text-gray-500 mb-3">
+          Abre tu app (Google Authenticator, Authy, 1Password) y agrega una nueva cuenta usando esta clave manual.
+        </p>
+        <div className="flex items-center gap-2">
+          <div className="flex-1 p-3 bg-gray-50 border border-gray-200 rounded-xl">
+            <p className="text-sm font-mono text-gray-700 break-all select-all">
               {enrollState.secret}
             </p>
-          )}
+          </div>
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            onClick={copySecret}
+            className="shrink-0 h-10 w-10"
+          >
+            {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
+          </Button>
         </div>
       </div>
+
+      {/* Backup codes */}
+      {enrollState.backupCodes.length > 0 && (
+        <div>
+          <p className="text-sm font-medium text-[#1C1917] mb-2">
+            Códigos de respaldo
+          </p>
+          <p className="text-xs text-gray-500 mb-2">
+            Guarda estos códigos en un lugar seguro. Los necesitarás si pierdes acceso a tu app de autenticación.
+          </p>
+          <div className="grid grid-cols-2 gap-1.5 p-3 bg-gray-50 border border-gray-200 rounded-xl">
+            {enrollState.backupCodes.map((code, i) => (
+              <span key={i} className="text-xs font-mono text-gray-600">
+                {code}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Step 2 — Enter code */}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

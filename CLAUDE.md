@@ -2,7 +2,7 @@
 
 ## Qué es este proyecto
 CoolDesk es un SaaS kanban + IA para equipos pequeños. Brand: AI-LURUS.
-Stack: Next.js 14 App Router · Supabase (Auth + DB + Storage + Realtime) · Tailwind CSS · shadcn/ui · TypeScript.
+Stack: Next.js 16 App Router · Neon (Serverless Postgres) · Prisma v7 (ORM) · Better Auth (Auth + 2FA) · Tailwind CSS · shadcn/ui · TypeScript.
 
 ## Antes de tocar cualquier archivo
 1. Lee docs/ARCHITECTURE.md
@@ -10,11 +10,11 @@ Stack: Next.js 14 App Router · Supabase (Auth + DB + Storage + Realtime) · Tai
 3. Si vas a modificar la DB, lee docs/DATA_MODEL.md primero
 
 ## Reglas de trabajo
-- Nunca hagas cambios directos en `supabase/migrations/` si hay migraciones sin aplicar
-- Siempre genera tipos de TypeScript desde el schema de Supabase (`npx supabase gen types`)
+- Toda interacción con la DB usa Prisma (`db` singleton de `lib/db.ts`)
+- Auth del servidor: `auth.api.getSession({ headers: await headers() })`
+- Auth del cliente: `authClient` de `lib/auth-client.ts`
 - Los componentes de UI van en `apps/web/components/ui/` (primitivos shadcn) o `components/[feature]/` (compuestos)
 - Server Components por defecto. Client Components solo cuando hay interactividad
-- Toda llamada a Supabase desde el servidor usa el cliente con service role; desde el cliente usa el cliente anon con RLS
 - Los endpoints de IA usan Route Handlers en `/app/api/ai/`
 - Nunca hardcodees secrets. Usa `.env.local` y valida con zod en `lib/env.ts`
 

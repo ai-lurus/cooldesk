@@ -1,28 +1,28 @@
-import type { Database } from "./database.types"
+import type { Prisma, MemberRole, TaskPriority, UserTheme } from "@prisma/client"
 
-// Aliases de tipos base
-export type User = Database["public"]["Tables"]["users"]["Row"]
-export type Workspace = Database["public"]["Tables"]["workspaces"]["Row"]
-export type WorkspaceMember = Database["public"]["Tables"]["workspace_members"]["Row"]
-export type Project = Database["public"]["Tables"]["projects"]["Row"]
-export type Column = Database["public"]["Tables"]["columns"]["Row"]
-export type Task = Database["public"]["Tables"]["tasks"]["Row"]
-export type Subtask = Database["public"]["Tables"]["subtasks"]["Row"]
-export type Comment = Database["public"]["Tables"]["comments"]["Row"]
-export type Attachment = Database["public"]["Tables"]["attachments"]["Row"]
-export type Notification = Database["public"]["Tables"]["notifications"]["Row"]
-export type ActivityLog = Database["public"]["Tables"]["activity_log"]["Row"]
-export type Invitation = Database["public"]["Tables"]["invitations"]["Row"]
+// Aliases de tipos base — now derived from Prisma
+export type User = Prisma.UserGetPayload<{}>
+export type Workspace = Prisma.WorkspaceGetPayload<{}>
+export type WorkspaceMember = Prisma.WorkspaceMemberGetPayload<{}>
+export type Project = Prisma.ProjectGetPayload<{}>
+export type Column = Prisma.ColumnGetPayload<{}>
+export type Task = Prisma.TaskGetPayload<{}>
+export type Subtask = Prisma.SubtaskGetPayload<{}>
+export type Comment = Prisma.CommentGetPayload<{}>
+export type Attachment = Prisma.AttachmentGetPayload<{}>
+export type Notification = Prisma.NotificationGetPayload<{}>
+export type ActivityLog = Prisma.ActivityLogGetPayload<{}>
+export type Invitation = Prisma.InvitationGetPayload<{}>
 
 // Tipos compuestos
 export type TaskWithAssignee = Task & {
-  assignee: Pick<User, "id" | "name" | "avatar_url"> | null
-  creator: Pick<User, "id" | "name" | "avatar_url">
+  assignee: Pick<User, "id" | "name" | "image"> | null
+  creator: Pick<User, "id" | "name" | "image">
 }
 
 export type TaskDetail = TaskWithAssignee & {
   subtasks: Subtask[]
-  comments: (Comment & { author: Pick<User, "id" | "name" | "avatar_url"> })[]
+  comments: (Comment & { author: Pick<User, "id" | "name" | "image"> })[]
   attachments: (Attachment & { uploader: Pick<User, "id" | "name"> })[]
 }
 
@@ -35,13 +35,11 @@ export type ProjectWithColumns = Project & {
 }
 
 export type WorkspaceWithMembers = Workspace & {
-  members: (WorkspaceMember & { user: Pick<User, "id" | "name" | "email" | "avatar_url"> })[]
+  members: (WorkspaceMember & { user: Pick<User, "id" | "name" | "email" | "image"> })[]
 }
 
-// Roles
-export type MemberRole = Database["public"]["Enums"]["member_role"]
-export type TaskPriority = Database["public"]["Enums"]["task_priority"]
-export type UserTheme = Database["public"]["Enums"]["user_theme"]
+// Roles — re-exported from Prisma enums
+export type { MemberRole, TaskPriority, UserTheme }
 
 // IA
 export interface AISuggestion {

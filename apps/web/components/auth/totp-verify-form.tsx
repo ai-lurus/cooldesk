@@ -10,7 +10,7 @@ import { Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { createClient } from "@/lib/supabase/client"
+import { authClient } from "@/lib/auth-client"
 
 const schema = z.object({
   code: z
@@ -34,34 +34,12 @@ export function TotpVerifyForm() {
 
   async function onSubmit(data: FormData) {
     setLoading(true)
-    const supabase = createClient()
 
-    const { data: factors, error: factorsError } = await supabase.auth.mfa.listFactors()
-
-    if (factorsError || !factors?.totp?.length) {
-      toast.error("No se encontró un autenticador configurado.")
-      setLoading(false)
-      return
-    }
-
-    const factorId = factors.totp[0].id
-
-    const { data: challenge, error: challengeError } =
-      await supabase.auth.mfa.challenge({ factorId })
-
-    if (challengeError || !challenge) {
-      toast.error("Error al iniciar el desafío de autenticación.")
-      setLoading(false)
-      return
-    }
-
-    const { error: verifyError } = await supabase.auth.mfa.verify({
-      factorId,
-      challengeId: challenge.id,
+    const { error } = await authClient.twoFactor.verifyTotp({
       code: data.code,
     })
 
-    if (verifyError) {
+    if (error) {
       setLoading(false)
       setError("code", { message: "Código incorrecto. Intenta de nuevo." })
       return

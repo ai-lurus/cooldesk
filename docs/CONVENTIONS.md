@@ -32,10 +32,8 @@ components/
   auth/
 
 lib/
-  supabase/
-    client.ts       ← cliente browser (anon key)
-    server.ts       ← cliente server (service role, solo en Server Components)
-    middleware.ts   ← refresh de sesión en middleware.ts raíz
+  auth-client.ts    ← cliente Better Auth
+  db.ts             ← Prisma client
   ai/
     anthropic.ts    ← cliente Anthropic + helpers
     prompts.ts      ← system prompts y templates
@@ -49,7 +47,6 @@ hooks/
   use-realtime.ts
 
 types/
-  database.types.ts ← generado por supabase gen types (NO editar manualmente)
   app.types.ts      ← tipos de dominio de la app
 ```
 
@@ -62,8 +59,8 @@ types/
 | Utilidades | camelCase | `formatDate.ts` |
 | Tipos/Interfaces | PascalCase descriptivo | `TaskWithAssignee` |
 | Constantes | SCREAMING_SNAKE_CASE | `MAX_FILE_SIZE_MB` |
-| Env vars públicas | `NEXT_PUBLIC_` prefijo | `NEXT_PUBLIC_SUPABASE_URL` |
-| Env vars privadas | SCREAMING_SNAKE_CASE | `SUPABASE_SERVICE_ROLE_KEY` |
+| Env vars públicas | `NEXT_PUBLIC_` prefijo | `NEXT_PUBLIC_APP_URL` |
+| Env vars privadas | SCREAMING_SNAKE_CASE | `DATABASE_URL` |
 | Rutas API | kebab-case | `/api/v1/task-comments` |
 
 ## Server vs Client Components
@@ -73,7 +70,7 @@ types/
   - Hooks de React (`useState`, `useEffect`, `useCallback`, etc.)
   - Eventos del DOM (`onClick`, `onChange`, etc.)
   - Estado local o contexto del cliente
-  - WebSockets / Supabase Realtime
+  - WebSockets
   - APIs del browser (`localStorage`, `window`, etc.)
 
 ```tsx
@@ -94,27 +91,18 @@ export function TaskCard({ task }: { task: Task }) {
 ## Fetching de datos
 
 ```typescript
-// Server Component: usa cliente server (service role)
-import { createServerClient } from "@/lib/supabase/server"
+// Server Component: usando Prisma
+import { db } from "@/lib/db"
 
 async function getProjects(workspaceId: string) {
-  const supabase = createServerClient()
-  const { data, error } = await supabase
-    .from("projects")
-    .select("*")
-    .eq("workspace_id", workspaceId)
-
-  if (error) throw new Error(`Failed to fetch projects: ${error.message}`)
-  return data
+  const projects = await db.project.findMany({
+    where: { workspaceId }
+  })
+  return projects
 }
 
-// Client Component: usa cliente browser (anon key + RLS)
-import { createBrowserClient } from "@/lib/supabase/client"
-
-function useProjects(workspaceId: string) {
-  const supabase = createBrowserClient()
-  // usar SWR o React Query para re-fetching
-}
+// Client Component
+// usar SWR o React Query fetchando desde /api o Server Actions
 ```
 
 ## Manejo de errores
@@ -143,14 +131,11 @@ toast.error("No se pudo guardar la tarea")
 
 - **Preferir Server Actions** para mutaciones simples (forms)
 - **Route Handlers** para mutaciones complejas o desde cliente con lógica condicional
-- **Nunca hacer fetch directo a Supabase desde el cliente** para writes que requieren validación de permisos — siempre pasar por un Route Handler o Server Action
+- **Validar siempre los permisos en el servidor** — siempre pasar por un Route Handler o Server Action
 
-## RLS (Row Level Security)
+## Autorización
 
-- **Toda tabla tiene RLS habilitado** — sin excepciones
-- El cliente browser **NUNCA** usa service role key
-- Revisar policies en `supabase/migrations/` antes de hacer queries nuevos
-- El cliente server (service role) bypassa RLS — úsalo solo en Server Components y Route Handlers verificados
+- Validar permisos en Server Actions y Route Handlers antes de ejecutar mutaciones con Prisma.
 
 ## Validación de inputs
 
@@ -174,14 +159,13 @@ if (!parsed.success) {
 }
 ```
 
-## Tipos de Supabase
+## Prisma
 
 ```bash
 # Regenerar siempre que cambies el schema
-npx supabase gen types typescript --local > apps/web/types/database.types.ts
+npx prisma generate
 ```
 
-- **NUNCA** editar `database.types.ts` manualmente
 - Tipos de dominio adicionales van en `types/app.types.ts`
 
 ## Imports
@@ -189,7 +173,7 @@ npx supabase gen types typescript --local > apps/web/types/database.types.ts
 ```typescript
 // Orden: externos → internos absolutos → relativos
 import { z } from "zod"
-import { createServerClient } from "@/lib/supabase/server"
+import { db } from "@/lib/db"
 import { formatDate } from "./utils"
 ```
 

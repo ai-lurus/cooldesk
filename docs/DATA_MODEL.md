@@ -1,6 +1,6 @@
 # Modelo de datos — CoolDesk
 
-PostgreSQL gestionado por Supabase. Todas las tablas usan UUID como clave primaria.
+PostgreSQL gestionado por Neon. Todas las tablas usan UUID como clave primaria.
 
 ## Tablas
 
@@ -113,7 +113,7 @@ Comentarios en tareas.
 | updated_at | TIMESTAMPTZ | Trigger on update |
 
 ### attachments
-Archivos adjuntos. Storage en Supabase.
+Archivos adjuntos. Storage en Vercel Blob o AWS S3.
 
 | Columna | Tipo | Notas |
 |---|---|---|
@@ -214,7 +214,7 @@ Preferencias de notificación por tipo y canal.
 - `activity_log` referencia polimórfica a workspace, project, task
 - `notifications` referencia polimórfica vía reference_id + reference_type
 
-## Límites por plan (enforced en middleware + RLS)
+## Límites por plan (enforced en middleware + backend)
 
 | Plan | Proyectos | Miembros | Tareas | Storage |
 |---|---|---|---|---|

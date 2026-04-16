@@ -91,7 +91,7 @@ Público objetivo / Personas
 | Propuesta de valor | Tablero kanban con asistente de IA integrado que sugiere prioridades, detecta cuellos de botella y redistribuye carga de trabajo. |
 | Modelo de negocio | Freemium (Free \+ Pro \+ Business \+ Enterprise) |
 | Plataforma | Web responsive (desktop-first, mobile-friendly) |
-| Stack | Next.js 14+ · Supabase · Tailwind CSS · shadcn/ui |
+| Stack | Next.js 16+ · Prisma · Neon · Better Auth · Tailwind CSS · shadcn/ui |
 | Asistente IA | Híbrido (Ollama local para desarrollo \+ API cloud para producción) |
 
 # **2\. Identidad de marca**
@@ -304,7 +304,7 @@ Todas las pantallas están implementadas en el prototipo interactivo. Total: 72 
 
 # **7\. Modelo de datos**
 
-PostgreSQL gestionado por Supabase. Todas las tablas usan UUID como clave primaria.
+PostgreSQL gestionado por Neon. Todas las tablas usan UUID como clave primaria.
 
 ### **users**
 
@@ -422,7 +422,7 @@ Comentarios en tareas.
 
 ### **attachments**
 
-Archivos adjuntos. Storage en Supabase.
+Archivos adjuntos. Storage en Vercel Blob o AWS S3.
 
 | Columna | Tipo | Notas |
 | :---- | :---- | :---- |
@@ -713,7 +713,7 @@ Cada sugerencia devuelta por la API:
 
 # **10\. Especificación de tiempo real**
 
-CoolDesk utiliza Supabase Realtime (WebSockets) para mantener la interfaz sincronizada entre usuarios conectados al mismo workspace.
+CoolDesk utiliza WebSockets para mantener la interfaz sincronizada entre usuarios conectados al mismo workspace.
 
 ## **10.1 Eventos sincronizados**
 
@@ -725,7 +725,7 @@ CoolDesk utiliza Supabase Realtime (WebSockets) para mantener la interfaz sincro
 | Tablero | Tarea actualizada | tasks (UPDATE) | Campos se actualizan si modal está abierto |
 | **Comentarios** | Nuevo comentario | comments (INSERT) | Comentario aparece al final de la lista |
 | **Notificaciones** | Nueva notificación | notifications (INSERT) | Badge de contador se incrementa |
-| **Presencia (v2)** | Usuario conectado | Supabase Presence | Avatar con indicador verde en sidebar |
+| **Presencia (v2)** | Usuario conectado | WebSockets | Avatar con indicador verde en sidebar |
 
 ## **10.2 Canales de suscripción**
 
@@ -802,7 +802,7 @@ Cada tipo de notificación tiene canales activos por defecto. El usuario puede p
 | **2** | Pasarela de pago (Stripe, Mercado Pago) | Product / Finanzas | Stripe global; Mercado Pago para LATAM |
 | **3** | Migración columnas fijas → editables (v2) | Tech Lead | Migrar datos sin romper posiciones |
 | **4** | Soporte multi-idioma (i18n) | Product | Evaluar demanda: inglés, portugués |
-| **5** | Dominio y hosting de producción | DevOps | Vercel frontend, Supabase cloud backend |
+| **5** | Dominio y hosting de producción | DevOps | Vercel frontend, Neon cloud DB |
 | **6** | Política de retención de datos y backups | Tech Lead / Legal | Frecuencia de backups por plan |
 
 — Fin del documento —
