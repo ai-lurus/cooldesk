@@ -18,12 +18,12 @@ export function AuthSideContent({
       {/* Content */}
       <div className="relative z-10 w-full max-w-[440px] mb-8 shrink-0">
         {tag && (
-          <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-[#FF7A30]/10 text-[#FF7A30] text-[11px] font-bold tracking-widest uppercase mb-6">
+          <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-[#FCECE3] text-[#1A1A1A] text-[11px] font-bold tracking-widest uppercase mb-6">
             {tag}
           </div>
         )}
         
-        <h2 className="text-[36px] md:text-[44px] lg:text-[52px] leading-[1.05] font-extrabold text-[#1A1A1A] mb-6 tracking-tight">
+        <h2 className="text-[36px] md:text-[44px] lg:text-[52px] leading-[1.05] font-extrabold text-[#1A1A1A] mb-6 tracking-tighter">
           {title}
         </h2>
         
@@ -33,7 +33,7 @@ export function AuthSideContent({
       </div>
 
       {/* Image Container */}
-      <div className="relative flex-1 min-h-0 w-full rounded-[32px] overflow-hidden shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] border border-brand-border">
+      <div className="relative flex-1 min-h-0 w-full rounded-[24px] overflow-hidden">
         <Image
           src={imageSrc}
           alt="Illustration"

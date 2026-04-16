@@ -147,17 +147,12 @@ export function RegisterForm() {
       <Button
         type="submit"
         disabled={loading}
-        className="w-full bg-brand-primary hover:bg-brand-primary-hover text-white rounded-xl h-12 font-bold transition-all shadow-lg shadow-brand-primary/20"
+        className="w-full bg-brand-primary hover:bg-brand-primary-hover text-white rounded-xl h-12 font-bold transition-all"
       >
         {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
         Crear cuenta
       </Button>
 
-      <p className="text-[9px] text-[#B3B3B3] text-center font-bold tracking-widest uppercase py-4">
-        Al crear una cuenta, aceptas nuestros{" "}
-        <Link href="/terms" className="underline hover:text-brand-text transition-colors">Términos de servicio</Link> &{" "}
-        <Link href="/privacy" className="underline hover:text-brand-text transition-colors">Política de privacidad</Link>
-      </p>
     </form>
   )
 }

@@ -23,6 +23,13 @@ export default function RegisterPage() {
           imageSrc="/auth-register.png"
         />
       }
+      footerContent={
+        <p className="text-[9px] text-[#B3B3B3] text-center font-bold tracking-widest uppercase mt-4">
+          Al crear una cuenta, aceptas nuestros{" "}
+          <Link href="/terms" className="underline hover:text-brand-text transition-colors">Términos de servicio</Link> &{" "}
+          <Link href="/privacy" className="underline hover:text-brand-text transition-colors">Política de privacidad</Link>
+        </p>
+      }
     >
       <AuthCard
         title="Crear cuenta"
@@ -31,7 +38,7 @@ export default function RegisterPage() {
         <RegisterForm />
         
         <div className="mt-8 text-center text-[13px] text-brand-text-muted">
-          ¿Ya tienes cuenta?{" "}
+          ¿Ya tienes una cuenta?{" "}
           <Link href="/login" className="text-brand-primary hover:underline font-bold">
             Iniciar sesión
           </Link>

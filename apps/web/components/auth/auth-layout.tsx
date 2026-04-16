@@ -10,6 +10,7 @@ interface AuthLayoutProps {
   logoPosition?: "left" | "center"
   centered?: boolean
   singleCard?: boolean
+  footerContent?: React.ReactNode
 }
 
 export function AuthLayout({
@@ -19,6 +20,7 @@ export function AuthLayout({
   logoPosition = "center",
   centered = false,
   singleCard = false,
+  footerContent,
 }: AuthLayoutProps) {
   return (
     <div className="h-screen flex flex-col bg-brand-background overflow-hidden relative">
@@ -33,15 +35,15 @@ export function AuthLayout({
           href="/" 
           className="w-8 h-8 flex items-center justify-center hover:bg-brand-secondary-hover rounded-full transition-colors"
         >
-          <ArrowLeft className="w-4 h-4 text-brand-text" />
+          <ArrowLeft className="w-4 h-4 text-brand-primary" />
         </Link>
         
         <div className={clsx(
           "flex items-center select-none cursor-default",
           logoPosition === "center" ? "absolute left-1/2 -translate-x-1/2" : "ml-2"
         )}>
-          <span className="text-lg font-bold tracking-tight text-brand-text">Simply</span>
-          <span className="text-lg font-bold tracking-tight text-brand-primary">Desk</span>
+          <span className="text-lg font-bold tracking-tight text-brand-primary">Simply</span>
+          <span className="text-lg font-bold tracking-tight text-brand-text">Desk</span>
         </div>
       </header>
 
@@ -56,8 +58,8 @@ export function AuthLayout({
             </div>
 
             {/* Side Content / Image Side */}
-            <div className="hidden md:flex flex-1 flex-col justify-center min-w-0 h-full overflow-hidden p-3 lg:p-4">
-              <div className="relative w-full h-full rounded-[24px] overflow-hidden bg-[#F1F0EE]">
+            <div className="hidden md:flex flex-1 flex-col justify-center min-w-0 h-full bg-[#F1F0EE] overflow-hidden">
+              <div className="relative w-full h-full overflow-hidden">
                 {sideContent ? (
                   sideContent
                 ) : (
@@ -84,11 +86,19 @@ export function AuthLayout({
               centered && "w-full"
             )}>
               <div className={clsx(
-                "w-full bg-white rounded-[28px] shadow-[0_24px_48px_-12px_rgba(0,0,0,0.03)] border border-brand-border p-6 md:p-10 lg:p-12 overflow-y-auto max-h-full scrollbar-hide shrink-0",
+                "w-full bg-white rounded-2xl md:rounded-[28px] border-none shadow-[0_8px_30px_rgb(0,0,0,0.04)] sm:shadow-[0_24px_48px_-12px_rgba(0,0,0,0.03)] p-6 md:p-10 lg:p-12 overflow-y-auto max-h-full scrollbar-hide shrink-0",
                 centered ? "max-w-full" : "max-w-[420px]"
               )}>
                 {children}
               </div>
+              {footerContent && (
+                <div className={clsx(
+                  "mt-6 w-full text-center px-4",
+                  centered ? "max-w-full" : "max-w-[420px]"
+                )}>
+                  {footerContent}
+                </div>
+              )}
             </div>
 
             {/* Side Content / Image Side */}
@@ -99,7 +109,7 @@ export function AuthLayout({
                     {sideContent}
                   </div>
                 ) : (
-                  <div className="relative w-full aspect-video rounded-[20px] overflow-hidden bg-[#F1F0EE] m-3">
+                  <div className="relative w-full aspect-video rounded-[20px] overflow-hidden m-3">
                     <Image
                       src="/auth-bg.png"
                       alt="Authentication background"
@@ -118,8 +128,8 @@ export function AuthLayout({
       {/* Footer */}
       <footer className="h-14 border-t border-brand-border px-4 md:px-8 flex items-center justify-between text-[10px] font-bold tracking-widest text-[#B3B3B3] uppercase shrink-0">
         <div className="flex items-center gap-1">
-          <span className="text-brand-text opacity-40">Simply</span>
-          <span className="text-brand-primary opacity-40">Desk</span>
+          <span className="text-brand-primary opacity-40">Simply</span>
+          <span className="text-brand-text opacity-40">Desk</span>
         </div>
         
         <nav className="hidden sm:flex items-center gap-6">
@@ -129,7 +139,7 @@ export function AuthLayout({
         </nav>
 
         <div className="opacity-60">
-          © {new Date().getFullYear()} SIMPLYDESK INC. 
+          © {new Date().getFullYear()} SIMPLYDESK INC. COGNITIVE CANVAS SYSTEM.
         </div>
       </footer>
     </div>
