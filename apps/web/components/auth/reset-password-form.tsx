@@ -35,7 +35,7 @@ export function ResetPasswordForm() {
               type={showPassword ? "text" : "password"}
               placeholder="••••••••"
               required
-              className="h-12 px-4 pr-10 bg-[#F9F9F8] border-transparent hover:border-brand-border focus:border-brand-primary focus:bg-white transition-all text-[14px]"
+              className="h-12 px-4 pr-10 bg-muted border-transparent hover:border-brand-border focus:border-brand-primary focus:bg-white transition-all text-[14px]"
             />
             <button
               type="button"
@@ -51,7 +51,7 @@ export function ResetPasswordForm() {
               8 caracteres
             </div>
             <div className="flex items-center gap-1.5">
-              <div className="w-1.5 h-1.5 rounded-full bg-[#E5E5E5]" />
+              <div className="w-1.5 h-1.5 rounded-full bg-brand-border-muted" />
               1 número
             </div>
           </div>
@@ -68,7 +68,7 @@ export function ResetPasswordForm() {
               type={showConfirmPassword ? "text" : "password"}
               placeholder="••••••••"
               required
-              className="h-12 px-4 pr-10 bg-[#F9F9F8] border-transparent hover:border-brand-border focus:border-brand-primary focus:bg-white transition-all text-[14px]"
+              className="h-12 px-4 pr-10 bg-muted border-transparent hover:border-brand-border focus:border-brand-primary focus:bg-white transition-all text-[14px]"
             />
             <button
               type="button"

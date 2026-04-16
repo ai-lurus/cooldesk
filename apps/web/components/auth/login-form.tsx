@@ -140,7 +140,7 @@ export function LoginForm({
 
       <div className="relative py-2 mt-2">
         <div className="absolute inset-0 flex items-center">
-          <span className="w-full border-t border-[#F1F0EE]"></span>
+          <span className="w-full border-t border-brand-border"></span>
         </div>
         <div className="relative flex justify-center text-[9px] uppercase font-bold tracking-[0.2em] text-brand-text opacity-30 bg-white px-3">
           o continuar con
@@ -150,7 +150,7 @@ export function LoginForm({
       <div className="grid grid-cols-2 gap-3">
         <Button
           variant="outline"
-          className="h-10 border-brand-border bg-[#F8F8F8] hover:bg-[#F2F2F2] rounded-[11px] font-bold text-[12px] text-brand-text gap-2"
+          className="h-10 border-brand-border bg-muted hover:bg-secondary rounded-[11px] font-bold text-[12px] text-brand-text gap-2"
           onClick={() => {}}
         >
           <div className="w-3.5 h-3.5 relative">
@@ -160,7 +160,7 @@ export function LoginForm({
         </Button>
         <Button
           variant="outline"
-          className="h-10 border-brand-border bg-[#F8F8F8] hover:bg-[#F2F2F2] rounded-[11px] font-bold text-[12px] text-brand-text gap-2"
+          className="h-10 border-brand-border bg-muted hover:bg-secondary rounded-[11px] font-bold text-[12px] text-brand-text gap-2"
           onClick={() => {}}
         >
            <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-current"><path d="M17.073 21.376c-.56.366-1.353.642-2.234.642-1.45 0-2.457-.864-3.593-.864-1.157 0-2.258.854-3.541.854-.925 0-1.78-.328-2.427-.695-1.579-.904-2.812-2.85-2.812-5.32 0-3.644 2.502-5.83 4.887-5.83 1.134 0 2.052.54 2.89.54.815 0 1.94-.555 2.924-.555 1.258 0 2.222.463 3.012 1.255-2.583 1.485-2.134 5.253.636 6.551-.55 1.442-1.314 2.85-2.342 3.422zm-3.328-16.155c-.015-2.492 2.062-4.524 4.545-4.521.025 2.651-2.097 4.593-4.545 4.521z"/></svg>

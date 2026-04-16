@@ -33,7 +33,7 @@ export function ForgotPasswordForm() {
             type="email"
             placeholder="tu@empresa.com"
             required
-            className="h-12 px-4 bg-[#F9F9F8] border-transparent hover:border-brand-border focus:border-brand-primary focus:bg-white transition-all text-[14px]"
+            className="h-12 px-4 bg-muted border-transparent hover:border-brand-border focus:border-brand-primary focus:bg-white transition-all text-[14px]"
           />
         </div>
 

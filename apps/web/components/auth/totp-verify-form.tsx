@@ -71,7 +71,7 @@ export function TotpVerifyForm() {
       <Button
         type="submit"
         disabled={loading}
-        className="w-full bg-[#F97316] hover:bg-[#ea6c0a] text-white"
+        className="w-full bg-brand-primary hover:bg-brand-primary-hover text-white"
       >
         {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
         Verificar

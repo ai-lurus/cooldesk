@@ -18,16 +18,16 @@ export function AuthSideContent({
       {/* Content */}
       <div className="relative z-10 w-full max-w-[440px] mb-8 shrink-0">
         {tag && (
-          <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-[#FCECE3] text-[#1A1A1A] text-[11px] font-bold tracking-widest uppercase mb-6">
+          <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-brand-primary/10 text-brand-text text-[11px] font-bold tracking-widest uppercase mb-6">
             {tag}
           </div>
         )}
         
-        <h2 className="text-[36px] md:text-[44px] lg:text-[52px] leading-[1.05] font-extrabold text-[#1A1A1A] mb-6 tracking-tighter">
+        <h2 className="text-[36px] md:text-[44px] lg:text-[52px] leading-[1.05] font-extrabold text-brand-text mb-6 tracking-tighter">
           {title}
         </h2>
         
-        <p className="text-[14px] md:text-[15px] text-[#666666] leading-relaxed font-medium">
+        <p className="text-[14px] md:text-[15px] text-brand-text-muted leading-relaxed font-medium">
           {description}
         </p>
       </div>

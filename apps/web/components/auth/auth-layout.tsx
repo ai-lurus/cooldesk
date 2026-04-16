@@ -58,7 +58,7 @@ export function AuthLayout({
             </div>
 
             {/* Side Content / Image Side */}
-            <div className="hidden md:flex flex-1 flex-col justify-center min-w-0 h-full bg-[#F1F0EE] overflow-hidden">
+            <div className="hidden md:flex flex-1 flex-col justify-center min-w-0 h-full bg-brand-border overflow-hidden">
               <div className="relative w-full h-full overflow-hidden">
                 {sideContent ? (
                   sideContent
@@ -126,7 +126,7 @@ export function AuthLayout({
       </main>
 
       {/* Footer */}
-      <footer className="h-14 border-t border-brand-border px-4 md:px-8 flex items-center justify-between text-[10px] font-bold tracking-widest text-[#B3B3B3] uppercase shrink-0">
+      <footer className="h-14 border-t border-brand-border px-4 md:px-8 flex items-center justify-between text-[10px] font-bold tracking-widest text-brand-text-muted/70 uppercase shrink-0">
         <div className="flex items-center gap-1">
           <span className="text-brand-primary opacity-40">Simply</span>
           <span className="text-brand-text opacity-40">Desk</span>

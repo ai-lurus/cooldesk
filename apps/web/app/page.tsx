@@ -27,7 +27,7 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full mb-12">
             {/* Feature 1 */}
-            <div className="bg-[#F9F9F8] rounded-[20px] p-6 text-center border border-transparent hover:border-brand-border transition-colors">
+            <div className="bg-muted rounded-[20px] p-6 text-center border border-transparent hover:border-brand-border transition-colors">
               <div className="flex justify-center mb-4">
                 <div className="w-12 h-12 rounded-full bg-brand-primary/10 flex items-center justify-center text-brand-primary">
                   <LayoutDashboard className="w-6 h-6" />
@@ -40,7 +40,7 @@ export default function Home() {
             </div>
 
             {/* Feature 2 */}
-            <div className="bg-[#F9F9F8] rounded-[20px] p-6 text-center border border-transparent hover:border-brand-border transition-colors">
+            <div className="bg-muted rounded-[20px] p-6 text-center border border-transparent hover:border-brand-border transition-colors">
               <div className="flex justify-center mb-4">
                 <div className="w-12 h-12 rounded-full bg-brand-primary/10 flex items-center justify-center text-brand-primary">
                   <Sparkles className="w-6 h-6" />
@@ -53,7 +53,7 @@ export default function Home() {
             </div>
 
             {/* Feature 3 */}
-            <div className="bg-[#F9F9F8] rounded-[20px] p-6 text-center border border-transparent hover:border-brand-border transition-colors">
+            <div className="bg-muted rounded-[20px] p-6 text-center border border-transparent hover:border-brand-border transition-colors">
               <div className="flex justify-center mb-4">
                 <div className="w-12 h-12 rounded-full bg-brand-primary/10 flex items-center justify-center text-brand-primary">
                   <Users className="w-6 h-6" />
@@ -81,7 +81,7 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="h-14 border-t border-brand-border px-4 md:px-8 flex flex-col sm:flex-row items-center justify-between text-[10px] font-bold tracking-widest text-[#B3B3B3] uppercase shrink-0 gap-2 sm:gap-0">
+      <footer className="h-14 border-t border-brand-border px-4 md:px-8 flex flex-col sm:flex-row items-center justify-between text-[10px] font-bold tracking-widest text-brand-text-muted/70 uppercase shrink-0 gap-2 sm:gap-0">
         <div className="opacity-60 text-center sm:text-left">
           © {new Date().getFullYear()} SimplyDesk Inteligencia Artificial. Todos los derechos reservados.
         </div>

@@ -105,7 +105,7 @@ export function TotpSetupForm() {
   if (enrollState.status === "password") {
     return (
       <div className="space-y-4">
-        <p className="text-sm text-[#1C1917]">
+        <p className="text-sm text-brand-text">
           Para configurar la autenticación en dos pasos, primero confirma tu contraseña.
         </p>
         <div className="space-y-1.5">
@@ -123,7 +123,7 @@ export function TotpSetupForm() {
         <Button
           onClick={startEnroll}
           disabled={passwordLoading || !password}
-          className="w-full bg-[#F97316] hover:bg-[#ea6c0a] text-white"
+          className="w-full bg-brand-primary hover:bg-brand-primary-hover text-white"
         >
           {passwordLoading ? (
             <Loader2 className="w-4 h-4 animate-spin mr-2" />
@@ -139,7 +139,7 @@ export function TotpSetupForm() {
   if (enrollState.status === "loading") {
     return (
       <div className="flex justify-center py-8">
-        <Loader2 className="w-6 h-6 animate-spin text-[#F97316]" />
+        <Loader2 className="w-6 h-6 animate-spin text-brand-primary" />
       </div>
     )
   }
@@ -154,7 +154,7 @@ export function TotpSetupForm() {
     <div className="space-y-6">
       {/* Step 1 — Copy secret key */}
       <div>
-        <p className="text-sm font-medium text-[#1C1917] mb-3">
+        <p className="text-sm font-medium text-brand-text mb-3">
           1. Copia esta clave en tu app de autenticación
         </p>
         <p className="text-xs text-gray-500 mb-3">
@@ -181,7 +181,7 @@ export function TotpSetupForm() {
       {/* Backup codes */}
       {enrollState.backupCodes.length > 0 && (
         <div>
-          <p className="text-sm font-medium text-[#1C1917] mb-2">
+          <p className="text-sm font-medium text-brand-text mb-2">
             Códigos de respaldo
           </p>
           <p className="text-xs text-gray-500 mb-2">
@@ -221,7 +221,7 @@ export function TotpSetupForm() {
         <Button
           type="submit"
           disabled={submitting}
-          className="w-full bg-[#F97316] hover:bg-[#ea6c0a] text-white"
+          className="w-full bg-brand-primary hover:bg-brand-primary-hover text-white"
         >
           {submitting ? (
             <Loader2 className="w-4 h-4 animate-spin mr-2" />

@@ -74,7 +74,7 @@ export function RegisterForm() {
           id="name"
           placeholder="Juan Pérez"
           autoComplete="name"
-          className="bg-[#F5F5F5] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-brand-primary/20"
+          className="bg-muted border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-brand-primary/20"
           {...register("name")}
         />
         {errors.name && (
@@ -94,7 +94,7 @@ export function RegisterForm() {
           type="email"
           placeholder="john@cooldesk.com"
           autoComplete="email"
-          className="bg-[#F5F5F5] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-brand-primary/20"
+          className="bg-muted border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-brand-primary/20"
           {...register("email")}
         />
         {errors.email && (
@@ -115,7 +115,7 @@ export function RegisterForm() {
             type="password"
             placeholder="••••••••"
             autoComplete="new-password"
-            className="bg-[#F5F5F5] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-brand-primary/20"
+            className="bg-muted border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-brand-primary/20"
             {...register("password")}
           />
           {errors.password && (
@@ -135,7 +135,7 @@ export function RegisterForm() {
             type="password"
             placeholder="••••••••"
             autoComplete="new-password"
-            className="bg-[#F5F5F5] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-brand-primary/20"
+            className="bg-muted border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-brand-primary/20"
             {...register("confirmPassword")}
           />
           {errors.confirmPassword && (

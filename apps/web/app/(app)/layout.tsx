@@ -67,7 +67,7 @@ export default async function AppLayout({
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-[#EDE8E0]">
+    <div className="flex h-screen overflow-hidden bg-brand-background">
       {workspace ? (
         <Sidebar
           workspace={workspace}

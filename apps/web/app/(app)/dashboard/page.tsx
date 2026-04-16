@@ -69,7 +69,7 @@ export default async function DashboardPage() {
     <div className="max-w-5xl mx-auto space-y-6">
       {/* Welcome */}
       <div>
-        <h1 className="text-2xl font-semibold text-[#1C1917]">{greeting}</h1>
+        <h1 className="text-2xl font-semibold text-brand-text">{greeting}</h1>
         <p className="text-sm text-gray-500 mt-0.5">
           {new Date().toLocaleDateString("es-ES", {
             weekday: "long",
@@ -84,7 +84,7 @@ export default async function DashboardPage() {
         <StatCard
           label="Proyectos"
           value={projects.length}
-          icon={<FolderKanban className="w-5 h-5 text-[#F97316]" />}
+          icon={<FolderKanban className="w-5 h-5 text-brand-primary" />}
         />
         <StatCard
           label="Tareas vencidas"
@@ -102,12 +102,12 @@ export default async function DashboardPage() {
       {/* Projects */}
       <section>
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-base font-semibold text-[#1C1917]">Proyectos</h2>
+          <h2 className="text-base font-semibold text-brand-text">Proyectos</h2>
           <Link
             href="/projects/new"
             className={cn(
               buttonVariants({ size: "sm" }),
-              "bg-[#F97316] hover:bg-[#ea6c0a] text-white"
+              "bg-brand-primary hover:bg-brand-primary-hover text-white"
             )}
           >
             <Plus className="w-4 h-4 mr-1.5" />
@@ -121,11 +121,11 @@ export default async function DashboardPage() {
               <Link key={project.id} href={`/projects/${project.id}`}>
                 <Card className="p-4 hover:shadow-md transition-shadow cursor-pointer h-full">
                   <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-[#F97316]/10 flex items-center justify-center shrink-0">
-                      <FolderKanban className="w-4 h-4 text-[#F97316]" />
+                    <div className="w-8 h-8 rounded-lg bg-brand-primary/10 flex items-center justify-center shrink-0">
+                      <FolderKanban className="w-4 h-4 text-brand-primary" />
                     </div>
                     <div className="min-w-0">
-                      <p className="text-sm font-medium text-[#1C1917] truncate">
+                      <p className="text-sm font-medium text-brand-text truncate">
                         {project.name}
                       </p>
                       {project.description && (
@@ -149,7 +149,7 @@ export default async function DashboardPage() {
               href="/projects/new"
               className={cn(
                 buttonVariants({ variant: "default" }),
-                "bg-[#F97316] hover:bg-[#ea6c0a] text-white"
+                "bg-brand-primary hover:bg-brand-primary-hover text-white"
               )}
             >
               <Plus className="w-4 h-4 mr-1.5" />
@@ -162,7 +162,7 @@ export default async function DashboardPage() {
       {/* Urgent tasks */}
       {urgentTasks.length > 0 && (
         <section>
-          <h2 className="text-base font-semibold text-[#1C1917] mb-3">
+          <h2 className="text-base font-semibold text-brand-text mb-3">
             Requieren atención
           </h2>
           <div className="space-y-2">
@@ -173,7 +173,7 @@ export default async function DashboardPage() {
               return (
                 <Card key={task.id} className="p-3 flex items-center gap-3">
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-[#1C1917] truncate">
+                    <p className="text-sm font-medium text-brand-text truncate">
                       {task.title}
                     </p>
                     {task.project?.name && (
@@ -221,7 +221,7 @@ function StatCard({
         {icon}
       </div>
       <div>
-        <p className={`text-xl font-bold ${alert && value > 0 ? "text-red-600" : "text-[#1C1917]"}`}>
+        <p className={`text-xl font-bold ${alert && value > 0 ? "text-red-600" : "text-brand-text"}`}>
           {value}
         </p>
         <p className="text-xs text-gray-500">{label}</p>

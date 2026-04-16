@@ -118,7 +118,7 @@ export function OnboardingFlow() {
             <CheckCircle2 className="w-7 h-7 text-green-500" />
           </div>
         </div>
-        <h2 className="text-xl font-semibold text-[#1C1917] mb-2">
+        <h2 className="text-xl font-semibold text-brand-text mb-2">
           ¡Todo listo!
         </h2>
         <p className="text-sm text-gray-500 mb-6">
@@ -128,7 +128,7 @@ export function OnboardingFlow() {
           onClick={() =>
             router.push(projectId ? `/projects/${projectId}` : "/dashboard")
           }
-          className="w-full bg-[#F97316] hover:bg-[#ea6c0a] text-white"
+          className="w-full bg-brand-primary hover:bg-brand-primary-hover text-white"
         >
           Ir a mi proyecto
         </Button>
@@ -150,7 +150,7 @@ export function OnboardingFlow() {
               key={s.id}
               className={`flex-1 flex items-center justify-center gap-1.5 py-3 text-xs font-medium transition-colors ${
                 isActive
-                  ? "text-[#F97316] border-b-2 border-[#F97316]"
+                  ? "text-brand-primary border-b-2 border-brand-primary"
                   : isCompleted
                   ? "text-green-600"
                   : "text-gray-400"
@@ -172,7 +172,7 @@ export function OnboardingFlow() {
         {step === "workspace" && (
           <div className="space-y-5">
             <div>
-              <h2 className="text-xl font-semibold text-[#1C1917] mb-1">
+              <h2 className="text-xl font-semibold text-brand-text mb-1">
                 Crea tu workspace
               </h2>
               <p className="text-sm text-gray-500">
@@ -199,7 +199,7 @@ export function OnboardingFlow() {
                     (se genera automáticamente)
                   </span>
                 </Label>
-                <div className="flex items-center gap-0 border rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-[#F97316] focus-within:border-[#F97316]">
+                <div className="flex items-center gap-0 border rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-brand-primary focus-within:border-brand-primary">
                   <span className="bg-gray-50 px-3 py-2 text-xs text-gray-400 border-r whitespace-nowrap">
                     cooldesk.app/
                   </span>
@@ -217,7 +217,7 @@ export function OnboardingFlow() {
             <Button
               onClick={handleCreateWorkspace}
               disabled={isPending || !wsName.trim() || !wsSlug.trim()}
-              className="w-full bg-[#F97316] hover:bg-[#ea6c0a] text-white"
+              className="w-full bg-brand-primary hover:bg-brand-primary-hover text-white"
             >
               {isPending && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
               Continuar
@@ -228,7 +228,7 @@ export function OnboardingFlow() {
         {step === "invite" && (
           <div className="space-y-5">
             <div>
-              <h2 className="text-xl font-semibold text-[#1C1917] mb-1">
+              <h2 className="text-xl font-semibold text-brand-text mb-1">
                 Invita a tu equipo
               </h2>
               <p className="text-sm text-gray-500">
@@ -245,7 +245,7 @@ export function OnboardingFlow() {
               </Label>
               <textarea
                 id="emails"
-                className="w-full border rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[#F97316] focus:border-[#F97316] resize-none min-h-[100px]"
+                className="w-full border rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-brand-primary focus:border-brand-primary resize-none min-h-[100px]"
                 placeholder={"ana@empresa.com\nbeto@empresa.com"}
                 value={emails}
                 onChange={(e) => setEmails(e.target.value)}
@@ -264,7 +264,7 @@ export function OnboardingFlow() {
               <Button
                 onClick={() => handleInvite(false)}
                 disabled={isPending || !emails.trim()}
-                className="flex-1 bg-[#F97316] hover:bg-[#ea6c0a] text-white"
+                className="flex-1 bg-brand-primary hover:bg-brand-primary-hover text-white"
               >
                 {isPending && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
                 Enviar invitaciones
@@ -276,7 +276,7 @@ export function OnboardingFlow() {
         {step === "project" && (
           <div className="space-y-5">
             <div>
-              <h2 className="text-xl font-semibold text-[#1C1917] mb-1">
+              <h2 className="text-xl font-semibold text-brand-text mb-1">
                 Crea tu primer proyecto
               </h2>
               <p className="text-sm text-gray-500">
@@ -324,7 +324,7 @@ export function OnboardingFlow() {
               <Button
                 onClick={() => handleCreateProject(false)}
                 disabled={isPending || !projectName.trim()}
-                className="flex-1 bg-[#F97316] hover:bg-[#ea6c0a] text-white"
+                className="flex-1 bg-brand-primary hover:bg-brand-primary-hover text-white"
               >
                 {isPending && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
                 Crear proyecto

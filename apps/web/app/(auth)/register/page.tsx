@@ -24,7 +24,7 @@ export default function RegisterPage() {
         />
       }
       footerContent={
-        <p className="text-[9px] text-[#B3B3B3] text-center font-bold tracking-widest uppercase mt-4">
+        <p className="text-[9px] text-brand-text-muted/60 text-center font-bold tracking-widest uppercase mt-4">
           Al crear una cuenta, aceptas nuestros{" "}
           <Link href="/terms" className="underline hover:text-brand-text transition-colors">Términos de servicio</Link> &{" "}
           <Link href="/privacy" className="underline hover:text-brand-text transition-colors">Política de privacidad</Link>
