@@ -21,21 +21,5 @@ export default async function OnboardingPage() {
 
   if (membership) redirect("/dashboard")
 
-  return (
-    <div className="min-h-screen bg-brand-background flex items-center justify-center p-4">
-      <div className="w-full max-w-lg">
-        {/* Logo */}
-        <div className="flex justify-center mb-8">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-brand-primary flex items-center justify-center">
-              <span className="text-white font-bold text-sm">S</span>
-            </div>
-            <span className="text-brand-text font-semibold text-xl">SimplyDesk</span>
-          </div>
-        </div>
-
-        <OnboardingFlow />
-      </div>
-    </div>
-  )
+  return <OnboardingFlow />
 }
