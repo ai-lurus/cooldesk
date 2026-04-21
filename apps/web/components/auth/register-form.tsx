@@ -58,7 +58,7 @@ export function RegisterForm() {
       return
     }
 
-    router.push("/verify-email?sent=true")
+    router.push(`/verify-email?sent=true&email=${encodeURIComponent(data.email)}`)
   }
 
   return (

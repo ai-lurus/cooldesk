@@ -1,16 +1,29 @@
 import Link from "next/link"
+import { headers } from "next/headers"
+import { auth } from "@/lib/auth"
 import { AuthCard } from "@/components/auth/auth-card"
 import { AuthLayout } from "@/components/auth/auth-layout"
 import { Mail, ArrowRight } from "lucide-react"
+import { ResendVerificationButton } from "@/components/auth/resend-verification-button"
 
 export const metadata = { title: "Verifica tu correo — SimplyDesk" }
 
 export default async function VerifyEmailPage({
   searchParams,
 }: {
-  searchParams: Promise<{ sent?: string }>
+  searchParams: Promise<{ sent?: string; email?: string }>
 }) {
-  const { sent } = await searchParams
+  const params = await searchParams
+  let email = params.email
+
+  if (!email) {
+    const session = await auth.api.getSession({
+      headers: await headers()
+    })
+    if (session?.user) {
+      email = session.user.email
+    }
+  }
 
   return (
     <AuthLayout centered logoPosition="left">
@@ -27,11 +40,7 @@ export default async function VerifyEmailPage({
             Ya verifiqué, continuar <ArrowRight className="w-4 h-4 ml-1" />
           </Link>
           
-          <button
-            className="inline-flex items-center justify-center rounded-[12px] text-[14px] font-bold transition-colors h-12 px-4 py-2 w-full text-brand-text hover:bg-secondary"
-          >
-            Reenviar correo
-          </button>
+          <ResendVerificationButton email={email} />
           
           <div className="pt-4 flex justify-center">
             <Link

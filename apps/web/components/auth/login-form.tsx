@@ -64,6 +64,7 @@ export function LoginForm({
         toast.error("Email o contraseña incorrectos")
       } else if (error.message?.includes("verified") || error.status === 403) {
         toast.error("Verifica tu email antes de iniciar sesión")
+        router.push(`/verify-email?email=${encodeURIComponent(data.email)}`)
       } else {
         toast.error("Error al iniciar sesión. Intenta de nuevo.")
       }

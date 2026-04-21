@@ -11,10 +11,11 @@ export async function sendEmail({
   subject: string
   html: string
 }) {
-  // Use onboarding@resend.dev for testing, use production domain if available and verified
-  const fromAddress = process.env.NODE_ENV === "production" 
+  // Use environment variable if provided, otherwise fallback based on environment
+  const envFromAddress = process.env.RESEND_FROM_EMAIL;
+  const fromAddress = envFromAddress || (process.env.NODE_ENV === "production" 
     ? "CoolDesk <noreply@cooldesk.app>" 
-    : "CoolDesk <onboarding@resend.dev>";
+    : "CoolDesk <onboarding@resend.dev>");
 
   const { data, error } = await resend.emails.send({
     from: fromAddress,

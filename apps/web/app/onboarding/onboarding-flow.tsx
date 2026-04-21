@@ -294,24 +294,24 @@ export function OnboardingFlow() {
   if (step === "invite") {
     return (
       <AuthLayout centered logoPosition="left">
-        <div className="flex flex-col items-center p-2 sm:p-4 text-center max-w-[400px] mx-auto">
-          <div className="w-16 h-16 rounded-[20px] bg-[#FFF2EB] flex items-center justify-center mb-6 shadow-sm">
-            <UserPlus className="w-7 h-7 text-brand-primary" />
+        <div className="flex flex-col items-center p-2 sm:p-6 text-center max-w-[480px] mx-auto w-full">
+          <div className="w-16 h-14 rounded-2xl bg-[#FDE4D0] flex items-center justify-center mb-8 shadow-sm">
+            <UserPlus className="w-7 h-7 text-[#A15822]" />
           </div>
           
-          <h2 className="text-[28px] font-extrabold text-brand-text mb-3 tracking-tight">
+          <h2 className="text-[26px] sm:text-[32px] font-extrabold text-brand-text mb-3 tracking-tight">
             Invita a tu equipo
           </h2>
-          <p className="text-[15px] text-brand-text-muted font-medium mb-10 w-[90%] mx-auto">
+          <p className="text-[14px] sm:text-[15px] text-brand-text-muted font-medium mb-10 w-[95%] mx-auto">
             Agrega compañeros para colaborar juntos en tus proyectos.
           </p>
 
-          <div className="w-full space-y-3 mb-6">
+          <div className="w-full space-y-4 mb-8">
             {invites.map((invite, index) => (
-              <div key={index} className="flex items-center gap-2">
+              <div key={index} className="flex items-center gap-3">
                 <Input 
-                  className="flex-1 bg-white border-brand-border rounded-xl h-12 px-4 font-medium" 
-                  placeholder="email@empresa.com"
+                  className="flex-1 bg-[#F9FAFB] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-brand-primary/20 text-[#111827] font-medium placeholder:text-[#9CA3AF]" 
+                  placeholder="nombre@empresa.com"
                   value={invite.email}
                   onChange={(e) => {
                     const newInvites = [...invites]
@@ -319,9 +319,9 @@ export function OnboardingFlow() {
                     setInvites(newInvites)
                   }}
                 />
-                <div className="relative w-[110px]">
+                <div className="relative w-[130px] shrink-0">
                   <select 
-                    className="w-full h-12 bg-white border border-brand-border rounded-xl px-4 appearance-none outline-none font-medium text-brand-text text-sm cursor-pointer"
+                    className="w-full h-12 bg-[#F9FAFB] border-none rounded-xl px-4 appearance-none outline-none font-medium text-[#111827] text-[14px] cursor-pointer focus-visible:ring-1 focus-visible:ring-brand-primary/20"
                     value={invite.role}
                     onChange={(e) => {
                       const newInvites = [...invites]
@@ -337,37 +337,40 @@ export function OnboardingFlow() {
                 </div>
               </div>
             ))}
-            <div className="flex justify-start">
+            <div className="flex justify-start pt-1">
               <button 
-                className="text-xs font-bold text-brand-text-muted hover:text-brand-text flex items-center gap-1 mt-2"
+                className="text-[13px] font-bold text-[#C2611A] hover:text-[#9A4B12] flex items-center gap-1.5 transition-colors"
                 onClick={() => setInvites([...invites, { email: "", role: "editor" }])}
               >
-                <Plus className="w-3.5 h-3.5" /> Agregar otro
+                <Plus className="w-4 h-4" /> Agregar otro
               </button>
             </div>
           </div>
 
-          <div className="w-full bg-[#f9fafb] border border-gray-100 rounded-xl p-4 flex items-center justify-center gap-3 mb-8">
-             <div className="flex -space-x-3">
-               <div className="w-8 h-8 rounded-full border-2 border-white bg-blue-500 z-30"></div>
-               <div className="w-8 h-8 rounded-full border-2 border-white bg-yellow-400 z-20"></div>
-               <div className="w-8 h-8 rounded-full border-2 border-white bg-green-500 z-10"></div>
+          <div className="w-full bg-[#FAFAFA] rounded-xl p-4 flex items-center justify-start gap-4 mb-10">
+             <div className="flex -space-x-2.5 shrink-0 pl-1">
+               <div className="w-9 h-9 rounded-full border-[2px] border-[#FAFAFA] bg-gray-100 flex items-center justify-center z-30 overflow-hidden shadow-sm"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix&backgroundColor=b6e3f4" alt="avatar" className="w-full h-full object-cover" /></div>
+               <div className="w-9 h-9 rounded-full border-[2px] border-[#FAFAFA] bg-gray-100 flex items-center justify-center z-20 overflow-hidden shadow-sm"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka&backgroundColor=c0aede" alt="avatar" className="w-full h-full object-cover" /></div>
+               <div className="w-9 h-9 rounded-full border-[2px] border-[#FAFAFA] bg-gray-100 flex items-center justify-center z-10 overflow-hidden shadow-sm"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Jocelyn&backgroundColor=d1d4f9" alt="avatar" className="w-full h-full object-cover" /></div>
              </div>
-             <span className="text-[11px] font-bold text-brand-text">3 tus colegas de Diseño UX ya colaboran</span>
+             <span className="text-[13px] sm:text-[14px] font-medium text-brand-text/80 text-left leading-tight">
+               Tus colegas de Diseño UX ya están colaborando.
+             </span>
           </div>
 
           <Button
             onClick={() => handleInvite(false)}
             disabled={isPending}
-            className="w-full bg-brand-primary hover:bg-brand-primary-hover text-white rounded-xl h-12 font-bold text-[15px] mb-6 shadow-sm shadow-brand-primary/20"
+            className="w-full bg-brand-primary hover:bg-brand-primary-hover text-white rounded-xl h-[52px] font-bold text-[15px] mb-6 shadow-sm shadow-brand-primary/20"
           >
-            {isPending ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+            {isPending ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : null}
             Invitar y continuar
           </Button>
 
           <button 
             onClick={() => handleInvite(true)}
-            className="text-[10px] uppercase font-bold tracking-widest text-[#9ca3af] hover:text-brand-text transition-colors"
+            disabled={isPending}
+            className="text-[11px] uppercase font-bold tracking-widest text-[#9ca3af] hover:text-brand-text transition-colors"
           >
             OMITIR POR AHORA
           </button>
