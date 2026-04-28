@@ -3,7 +3,8 @@ import { headers } from "next/headers"
 import Image from "next/image"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
-import { PlusCircle, Bot, MoreHorizontal } from "lucide-react"
+import { PlusCircle, MoreHorizontal } from "lucide-react"
+import { AiAssistantDrawer } from "@/components/ai-assistant-drawer"
 
 export const metadata = { title: "Dashboard — SimplyDesk" }
 
@@ -47,10 +48,8 @@ export default async function DashboardPage() {
 
   return (
     <div className="h-full flex flex-col items-center justify-center relative py-6">
-      {/* AI assistant floating icon */}
-      <button className="absolute top-0 right-0 z-10 w-12 h-12 rounded-xl bg-brand-primary/10 flex items-center justify-center hover:bg-brand-primary/20 transition-colors shadow-sm">
-        <Bot className="w-6 h-6 text-brand-primary" />
-      </button>
+      {/* AI assistant floating drawer */}
+      <AiAssistantDrawer />
 
       {/* Main content card */}
       <div className="w-full max-w-5xl bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden flex flex-col lg:flex-row relative">
