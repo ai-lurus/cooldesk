@@ -1,96 +1,37 @@
-import { Bell, ChevronDown } from "lucide-react"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { LogoutButton } from "./logout-button"
-import Link from "next/link"
+import { Search, ListFilter, Bell, Plus } from "lucide-react"
 
-interface HeaderProps {
-  user: {
-    name: string | null
-    email: string
-    avatar_url: string | null
-  }
-  title?: string
-}
-
-function getInitials(name: string | null, email: string): string {
-  if (name) {
-    return name
-      .split(" ")
-      .slice(0, 2)
-      .map((w) => w[0])
-      .join("")
-      .toUpperCase()
-  }
-  return email[0].toUpperCase()
-}
-
-export function Header({ user, title }: HeaderProps) {
-  const initials = getInitials(user.name, user.email)
-
+export function Header() {
   return (
-    <header className="h-14 border-b border-gray-200 bg-white flex items-center justify-between px-6 shrink-0">
-      <div className="flex items-center gap-2">
-        {title && (
-          <h1 className="text-base font-semibold text-brand-text">{title}</h1>
-        )}
+    <header className="h-20 bg-brand-background flex items-center justify-between px-10 shrink-0">
+      <div className="flex-1 max-w-2xl">
+        <div className="relative flex items-center w-full">
+          <Search className="absolute left-3.5 w-4 h-4 text-gray-400" />
+          <input
+            type="search"
+            placeholder="Buscar actividades, proyectos o tareas..."
+            className="w-full bg-[#f4f4f5] border-transparent focus:bg-white rounded-xl py-2.5 pl-10 pr-4 text-sm outline-none placeholder:text-gray-500 focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all font-medium text-brand-text"
+          />
+        </div>
       </div>
 
-      <div className="flex items-center gap-2">
-        {/* Notifications */}
-        <Link
-          href="/notifications"
-          className="relative p-2 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors"
-        >
-          <Bell className="w-5 h-5" />
-        </Link>
+      <div className="flex items-center gap-6 ml-4">
+        {/* Icons */}
+        <div className="flex items-center gap-1">
+          <button className="relative p-2 rounded-lg text-gray-500 hover:bg-gray-200/50 hover:text-gray-700 transition-colors">
+            <ListFilter className="w-5 h-5" />
+          </button>
+          
+          <button className="relative p-2 rounded-lg text-gray-500 hover:bg-gray-200/50 hover:text-gray-700 transition-colors">
+            <Bell className="w-5 h-5" />
+            <span className="absolute top-1.5 right-2 w-2 h-2 bg-brand-primary rounded-full ring-2 ring-brand-background"></span>
+          </button>
+        </div>
 
-        {/* User menu */}
-        <DropdownMenu>
-          <DropdownMenuTrigger>
-            <span className="flex items-center gap-2 rounded-lg px-2 py-1.5 hover:bg-gray-100 transition-colors cursor-pointer">
-              <Avatar className="w-7 h-7">
-                {user.avatar_url && (
-                  <AvatarImage src={user.avatar_url} alt={user.name ?? user.email} />
-                )}
-                <AvatarFallback className="bg-brand-primary text-white text-xs font-medium">
-                  {initials}
-                </AvatarFallback>
-              </Avatar>
-              <span className="text-sm font-medium text-brand-text hidden sm:block">
-                {user.name ?? user.email}
-              </span>
-              <ChevronDown className="w-3.5 h-3.5 text-gray-400 hidden sm:block" />
-            </span>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-52">
-            <div className="px-2 py-1.5">
-              <p className="text-sm font-medium text-brand-text truncate">
-                {user.name ?? "Sin nombre"}
-              </p>
-              <p className="text-xs text-brand-text-muted truncate">{user.email}</p>
-            </div>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <Link href="/settings/profile" className="flex w-full">
-                Mi perfil
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Link href="/settings" className="flex w-full">
-                Configuración
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <LogoutButton />
-          </DropdownMenuContent>
-        </DropdownMenu>
+        {/* Action Button */}
+        <button className="bg-brand-primary hover:bg-brand-primary-hover text-white flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all">
+          <Plus className="w-4 h-4" />
+          Nueva tarea
+        </button>
       </div>
     </header>
   )

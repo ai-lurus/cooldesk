@@ -67,12 +67,13 @@ export default async function AppLayout({
           workspace={workspace}
           projects={projects}
           currentPath={pathname}
+          user={userDisplay}
         />
       ) : null}
 
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        <Header user={userDisplay} />
-        <main className="flex-1 overflow-y-auto p-6">{children}</main>
+        <Header />
+        <main className="flex-1 overflow-y-auto px-6 pb-6">{children}</main>
       </div>
     </div>
   )
