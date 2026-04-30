@@ -31,6 +31,7 @@ export function LoginForm({
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors },
   } = useForm<FormData>({ resolver: zodResolver(schema) })
 
@@ -60,8 +61,15 @@ export function LoginForm({
 
     if (error) {
       setLoading(false)
-      if (error.message?.includes("Invalid") || error.message?.includes("credentials")) {
+      if (
+        error.status === 401 ||
+        error.message?.toLowerCase().includes("invalid") ||
+        error.message?.toLowerCase().includes("credential") ||
+        error.message?.toLowerCase().includes("password")
+      ) {
         toast.error("Email o contraseña incorrectos")
+        setError("email", { message: " " }) // Trigger red border
+        setError("password", { message: "Email o contraseña incorrectos" })
       } else if (error.message?.includes("verified") || error.status === 403) {
         toast.error("Verifica tu email antes de iniciar sesión")
         router.push(`/verify-email?email=${encodeURIComponent(data.email)}`)
@@ -85,11 +93,11 @@ export function LoginForm({
               type="email"
               placeholder="tu@empresa.com"
               autoComplete="email"
-              className="h-11 border-brand-border bg-white rounded-[12px] px-4 focus:ring-0 focus:border-brand-primary transition-all placeholder:text-brand-text-muted/40 text-[14px] font-medium"
+              className={`h-11 bg-white rounded-[12px] px-4 focus:ring-0 transition-all placeholder:text-brand-text-muted/40 text-[14px] font-medium ${errors.email ? 'border border-red-500 focus:border-red-500' : 'border border-brand-border focus:border-brand-primary'}`}
               {...register("email")}
             />
           </div>
-          {errors.email && (
+          {errors.email && errors.email.message !== " " && (
             <p className="text-[11px] text-red-500 font-medium pl-1">{errors.email.message}</p>
           )}
         </div>
@@ -104,7 +112,7 @@ export function LoginForm({
               type={showPassword ? "text" : "password"}
               placeholder="Mínimo 8 caracteres"
               autoComplete="current-password"
-              className="h-11 border-brand-border bg-white rounded-[12px] px-4 pr-10 focus:ring-0 focus:border-brand-primary transition-all placeholder:text-brand-text-muted/40 text-[14px] font-medium"
+              className={`h-11 bg-white rounded-[12px] px-4 pr-10 focus:ring-0 transition-all placeholder:text-brand-text-muted/40 text-[14px] font-medium ${errors.password ? 'border border-red-500 focus:border-red-500' : 'border border-brand-border focus:border-brand-primary'}`}
               {...register("password")}
             />
             <button

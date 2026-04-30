@@ -14,14 +14,15 @@ import { authClient } from "@/lib/auth-client"
 import Link from "next/link"
 
 const schema = z.object({
-  name: z.string().min(2, "Nombre muy corto").max(255),
-  email: z.string().email("Email inválido"),
+  name: z.string().min(1, "El nombre es requerido").min(2, "Nombre muy corto").max(255),
+  email: z.string().min(1, "El email es requerido").email("Email inválido"),
   password: z
     .string()
+    .min(1, "La contraseña es requerida")
     .min(8, "Mínimo 8 caracteres")
     .regex(/[A-Z]/, "Debe incluir una mayúscula")
     .regex(/[0-9]/, "Debe incluir un número"),
-  confirmPassword: z.string(),
+  confirmPassword: z.string().min(1, "Confirma tu contraseña"),
 }).refine((d) => d.password === d.confirmPassword, {
   message: "Las contraseñas no coinciden",
   path: ["confirmPassword"],
@@ -64,8 +65,8 @@ export function RegisterForm() {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
       <div className="space-y-2">
-        <Label 
-          htmlFor="name" 
+        <Label
+          htmlFor="name"
           className="text-[10px] uppercase font-bold tracking-widest text-brand-text mb-2 block"
         >
           Nombre completo
@@ -74,17 +75,17 @@ export function RegisterForm() {
           id="name"
           placeholder="Juan Pérez"
           autoComplete="name"
-          className="bg-muted border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-brand-primary/20"
+          className={`bg-muted rounded-xl h-12 px-4 focus-visible:ring-1 ${errors.name ? 'border border-red-500 focus-visible:ring-red-500/20' : 'border-none focus-visible:ring-brand-primary/20'}`}
           {...register("name")}
         />
-        {errors.name && (
-          <p className="text-[11px] text-red-500 font-medium px-1 mt-1">{errors.name.message}</p>
-        )}
+        <p className="text-[11px] text-red-500 font-medium px-1 mt-0.5 min-h-[16px]">
+          {errors.name?.message}
+        </p>
       </div>
 
       <div className="space-y-2">
-        <Label 
-          htmlFor="email" 
+        <Label
+          htmlFor="email"
           className="text-[10px] uppercase font-bold tracking-widest text-brand-text mb-2 block"
         >
           Correo electrónico
@@ -94,18 +95,18 @@ export function RegisterForm() {
           type="email"
           placeholder="john@cooldesk.com"
           autoComplete="email"
-          className="bg-muted border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-brand-primary/20"
+          className={`bg-muted rounded-xl h-12 px-4 focus-visible:ring-1 ${errors.email ? 'border border-red-500 focus-visible:ring-red-500/20' : 'border-none focus-visible:ring-brand-primary/20'}`}
           {...register("email")}
         />
-        {errors.email && (
-          <p className="text-[11px] text-red-500 font-medium px-1 mt-1">{errors.email.message}</p>
-        )}
+        <p className="text-[11px] text-red-500 font-medium px-1 mt-0.5 min-h-[16px]">
+          {errors.email?.message}
+        </p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label 
-            htmlFor="password" 
+          <Label
+            htmlFor="password"
             className="text-[10px] uppercase font-bold tracking-widest text-brand-text mb-2 block"
           >
             Contraseña
@@ -115,17 +116,17 @@ export function RegisterForm() {
             type="password"
             placeholder="••••••••"
             autoComplete="new-password"
-            className="bg-muted border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-brand-primary/20"
+            className={`bg-muted rounded-xl h-12 px-4 focus-visible:ring-1 ${errors.password ? 'border border-red-500 focus-visible:ring-red-500/20' : 'border-none focus-visible:ring-brand-primary/20'}`}
             {...register("password")}
           />
-          {errors.password && (
-            <p className="text-[11px] text-red-500 font-medium px-1 mt-1">{errors.password.message}</p>
-          )}
+          <p className="text-[11px] text-red-500 font-medium px-1 mt-0.5 min-h-[16px]">
+            {errors.password?.message}
+          </p>
         </div>
 
         <div className="space-y-2">
-          <Label 
-            htmlFor="confirmPassword" 
+          <Label
+            htmlFor="confirmPassword"
             className="text-[10px] uppercase font-bold tracking-widest text-brand-text mb-2 block"
           >
             Confirmar
@@ -135,12 +136,12 @@ export function RegisterForm() {
             type="password"
             placeholder="••••••••"
             autoComplete="new-password"
-            className="bg-muted border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-brand-primary/20"
+            className={`bg-muted rounded-xl h-12 px-4 focus-visible:ring-1 ${errors.confirmPassword ? 'border border-red-500 focus-visible:ring-red-500/20' : 'border-none focus-visible:ring-brand-primary/20'}`}
             {...register("confirmPassword")}
           />
-          {errors.confirmPassword && (
-            <p className="text-[11px] text-red-500 font-medium px-1 mt-1">{errors.confirmPassword.message}</p>
-          )}
+          <p className="text-[11px] text-red-500 font-medium px-1 mt-0.5 min-h-[16px]">
+            {errors.confirmPassword?.message}
+          </p>
         </div>
       </div>
 
