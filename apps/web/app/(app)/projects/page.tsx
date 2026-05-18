@@ -1,6 +1,46 @@
 import { KanbanBoard } from "@/components/kanban/kanban-board"
+import { ProjectSelector } from "./project-selector"
+import { auth } from "@/lib/auth"
+import { db } from "@/lib/db"
+import { headers, cookies } from "next/headers"
 
-export default function ProjectsPage() {
+export default async function ProjectsPage() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  })
+
+  if (!session) {
+    return null
+  }
+
+  const memberships = await db.workspaceMember.findMany({
+    where: { userId: session.user.id },
+    include: {
+      workspace: { select: { id: true } },
+    },
+    orderBy: { invitedAt: "asc" },
+    take: 1,
+  })
+
+  const workspace = memberships[0]?.workspace
+
+  let projects: { id: string; name: string }[] = []
+  if (workspace) {
+    projects = await db.project.findMany({
+      where: { workspaceId: workspace.id },
+      select: { id: true, name: true },
+      orderBy: { createdAt: "asc" },
+    })
+  }
+
+  const cookieStore = await cookies()
+  const activeProjectId = cookieStore.get("active_project_id")?.value
+  
+  let targetProjectId = activeProjectId
+  if (!targetProjectId || !projects.find(p => p.id === targetProjectId)) {
+    targetProjectId = projects[0]?.id || ""
+  }
+
   return (
     <div className="flex flex-col h-full bg-white">
       <main className="flex-1 overflow-hidden flex flex-col">
@@ -9,9 +49,7 @@ export default function ProjectsPage() {
           <p className="text-brand-primary font-bold text-xs tracking-widest mb-0.5">
             PROYECTOS
           </p>
-          <h2 className="text-2xl font-extrabold text-brand-text leading-tight">
-            Rediseño app
-          </h2>
+          <ProjectSelector projects={projects} activeProjectId={targetProjectId} />
         </div>
 
         {/* Kanban Board Area */}

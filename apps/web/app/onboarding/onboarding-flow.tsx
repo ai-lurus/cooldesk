@@ -24,11 +24,17 @@ function slugify(text: string): string {
     .slice(0, 50)
 }
 
-export function OnboardingFlow() {
+export function OnboardingFlow({
+  initialStep = "workspace",
+  initialWorkspaceId = null
+}: {
+  initialStep?: Step
+  initialWorkspaceId?: string | null
+}) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
-  const [step, setStep] = useState<Step>("workspace")
-  const [workspaceId, setWorkspaceId] = useState<string | null>(null)
+  const [step, setStep] = useState<Step>(initialStep)
+  const [workspaceId, setWorkspaceId] = useState<string | null>(initialWorkspaceId)
   const [projectId, setProjectId] = useState<string | null>(null)
 
   // Step 1 state
@@ -147,30 +153,30 @@ export function OnboardingFlow() {
 
   if (step === "workspace") {
     return (
-      <AuthLayout 
-        singleCard 
+      <AuthLayout
+        singleCard
         logoPosition="left"
         sideContent={
           <div className="w-full h-full relative">
-             <Image 
-               src="/onboarding1.png" 
-               alt="Onboarding" 
-               fill 
-               className="object-cover"
-               priority
-             />
-             <div className="absolute inset-0 bg-black/5"></div>
-             
-             {/* Floating Info Card */}
-             <div className="absolute top-[45%] left-10 max-w-[260px] bg-white/80 backdrop-blur-md px-6 py-5 rounded-2xl shadow-2xl border border-white/20">
-               <div className="flex items-center gap-2 mb-3">
-                 <div className="w-2 h-2 rounded-full bg-orange-500"></div>
-                 <span className="text-[10px] font-bold text-brand-text/60 tracking-widest uppercase">Intelligent Space</span>
-               </div>
-               <p className="text-brand-text text-base font-bold leading-tight">
-                 Organiza tus ideas con el poder de la IA en un lienzo infinito.
-               </p>
-             </div>
+            <Image
+              src="/onboarding1.png"
+              alt="Onboarding"
+              fill
+              className="object-cover"
+              priority
+            />
+            <div className="absolute inset-0 bg-black/5"></div>
+
+            {/* Floating Info Card */}
+            <div className="absolute top-[45%] left-10 max-w-[260px] bg-white/80 backdrop-blur-md px-6 py-5 rounded-2xl shadow-2xl border border-white/20">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-2 h-2 rounded-full bg-orange-500"></div>
+                <span className="text-[10px] font-bold text-brand-text/60 tracking-widest uppercase">Intelligent Space</span>
+              </div>
+              <p className="text-brand-text text-base font-bold leading-tight">
+                Organiza tus ideas con el poder de la IA en un lienzo infinito.
+              </p>
+            </div>
           </div>
         }
       >
@@ -181,7 +187,7 @@ export function OnboardingFlow() {
                 COGNITIVECANVAS
               </div>
               <h1 className="text-[32px] sm:text-[40px] leading-[1.1] font-extrabold text-brand-text mb-3 tracking-tight">
-                Configura tu espacio<br/>de trabajo
+                Configura tu espacio<br />de trabajo
               </h1>
               <p className="text-[15px] text-brand-text-muted font-medium">
                 Crea uno nuevo o únete a uno existente.
@@ -190,18 +196,16 @@ export function OnboardingFlow() {
 
             <div className="space-y-3 mb-8">
               {/* Option 1 */}
-              <div 
-                className={`flex items-center justify-between p-4 rounded-xl border-2 cursor-pointer transition-all ${
-                  workspaceOption === "create" 
-                    ? "border-brand-primary bg-white shadow-sm" 
+              <div
+                className={`flex items-center justify-between p-4 rounded-xl border-2 cursor-pointer transition-all ${workspaceOption === "create"
+                    ? "border-brand-primary bg-white shadow-sm"
                     : "border-transparent bg-gray-50/50 hover:bg-gray-100/50 border opacity-80"
-                }`}
+                  }`}
                 onClick={() => setWorkspaceOption("create")}
               >
                 <div className="flex items-center gap-3">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center shadow-sm transition-colors ${
-                    workspaceOption === "create" ? "bg-brand-primary text-white" : "bg-white border border-gray-200 text-gray-400"
-                  }`}>
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center shadow-sm transition-colors ${workspaceOption === "create" ? "bg-brand-primary text-white" : "bg-white border border-gray-200 text-gray-400"
+                    }`}>
                     <Plus className={`w-5 h-5 mx-auto ${workspaceOption === "create" ? "text-white fill-current" : ""}`} />
                   </div>
                   <span className={`font-bold text-sm ${workspaceOption === "create" ? "text-brand-text" : "text-gray-500"}`}>Crear nuevo workspace</span>
@@ -214,18 +218,16 @@ export function OnboardingFlow() {
               </div>
 
               {/* Option 2 */}
-              <div 
-                className={`flex items-center justify-between p-4 rounded-xl border-2 cursor-pointer transition-all ${
-                  workspaceOption === "join" 
-                    ? "border-brand-primary bg-white shadow-sm" 
+              <div
+                className={`flex items-center justify-between p-4 rounded-xl border-2 cursor-pointer transition-all ${workspaceOption === "join"
+                    ? "border-brand-primary bg-white shadow-sm"
                     : "border-transparent bg-gray-50/50 hover:bg-gray-100/50 border opacity-80"
-                }`}
+                  }`}
                 onClick={() => setWorkspaceOption("join")}
               >
                 <div className="flex items-center gap-3">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center shadow-sm transition-colors ${
-                    workspaceOption === "join" ? "bg-brand-primary text-white" : "bg-white border border-gray-200 text-gray-500"
-                  }`}>
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center shadow-sm transition-colors ${workspaceOption === "join" ? "bg-brand-primary text-white" : "bg-white border border-gray-200 text-gray-500"
+                    }`}>
                     <Key className="w-4 h-4 text-current" />
                   </div>
                   <span className={`font-bold text-sm ${workspaceOption === "join" ? "text-brand-text" : "text-gray-500"}`}>Unirse con código</span>
@@ -244,8 +246,8 @@ export function OnboardingFlow() {
                   <Label className="text-[10px] uppercase font-bold tracking-widest text-brand-text mb-2 block">
                     NOMBRE DEL WORKSPACE
                   </Label>
-                  <Input 
-                    className="bg-gray-100/80 border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-brand-primary/20 text-brand-text font-medium" 
+                  <Input
+                    className="bg-gray-100/80 border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-brand-primary/20 text-brand-text font-medium"
                     placeholder="Mi empresa"
                     value={wsName}
                     onChange={(e) => handleWsNameChange(e.target.value)}
@@ -257,8 +259,8 @@ export function OnboardingFlow() {
                   <Label className="text-[10px] uppercase font-bold tracking-widest text-brand-text mb-2 block">
                     CÓDIGO DE INVITACIÓN
                   </Label>
-                  <Input 
-                    className="bg-gray-100/80 border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-brand-primary/20 text-brand-text font-medium uppercase tracking-widest" 
+                  <Input
+                    className="bg-gray-100/80 border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-brand-primary/20 text-brand-text font-medium uppercase tracking-widest"
                     placeholder="ABCD-1234"
                     value={joinCode}
                     onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
@@ -270,14 +272,14 @@ export function OnboardingFlow() {
           </div>
 
           <div className="flex justify-between items-center mt-auto pb-4 pt-10">
-            <Button 
-              variant="ghost" 
-              className="font-bold text-brand-primary hover:text-brand-primary-hover px-0" 
+            <Button
+              variant="ghost"
+              className="font-bold text-brand-primary hover:text-brand-primary-hover px-0"
               onClick={() => router.push("/")}
             >
               <ArrowLeft className="w-4 h-4 mr-2" /> Atrás
             </Button>
-            <Button 
+            <Button
               disabled={isPending || (workspaceOption === "create" ? (!wsName.trim() || !wsSlug.trim()) : !joinCode.trim())}
               onClick={workspaceOption === "create" ? handleCreateWorkspace : handleJoinWorkspace}
               className="bg-brand-primary hover:bg-brand-primary-hover text-white rounded-xl h-11 px-6 font-bold shadow-sm shadow-brand-primary/20"
@@ -298,7 +300,7 @@ export function OnboardingFlow() {
           <div className="w-16 h-14 rounded-2xl bg-[#FDE4D0] flex items-center justify-center mb-8 shadow-sm">
             <UserPlus className="w-7 h-7 text-[#A15822]" />
           </div>
-          
+
           <h2 className="text-[26px] sm:text-[32px] font-extrabold text-brand-text mb-3 tracking-tight">
             Invita a tu equipo
           </h2>
@@ -309,8 +311,8 @@ export function OnboardingFlow() {
           <div className="w-full space-y-4 mb-8">
             {invites.map((invite, index) => (
               <div key={index} className="flex items-center gap-3">
-                <Input 
-                  className="flex-1 bg-[#F9FAFB] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-brand-primary/20 text-[#111827] font-medium placeholder:text-[#9CA3AF]" 
+                <Input
+                  className="flex-1 bg-[#F9FAFB] border-none rounded-xl h-12 px-4 focus-visible:ring-1 focus-visible:ring-brand-primary/20 text-[#111827] font-medium placeholder:text-[#9CA3AF]"
                   placeholder="nombre@empresa.com"
                   value={invite.email}
                   onChange={(e) => {
@@ -320,7 +322,7 @@ export function OnboardingFlow() {
                   }}
                 />
                 <div className="relative w-[130px] shrink-0">
-                  <select 
+                  <select
                     className="w-full h-12 bg-[#F9FAFB] border-none rounded-xl px-4 appearance-none outline-none font-medium text-[#111827] text-[14px] cursor-pointer focus-visible:ring-1 focus-visible:ring-brand-primary/20"
                     value={invite.role}
                     onChange={(e) => {
@@ -338,7 +340,7 @@ export function OnboardingFlow() {
               </div>
             ))}
             <div className="flex justify-start pt-1">
-              <button 
+              <button
                 className="text-[13px] font-bold text-[#C2611A] hover:text-[#9A4B12] flex items-center gap-1.5 transition-colors"
                 onClick={() => setInvites([...invites, { email: "", role: "editor" }])}
               >
@@ -348,14 +350,14 @@ export function OnboardingFlow() {
           </div>
 
           <div className="w-full bg-[#FAFAFA] rounded-xl p-4 flex items-center justify-start gap-4 mb-10">
-             <div className="flex -space-x-2.5 shrink-0 pl-1">
-               <div className="w-9 h-9 rounded-full border-[2px] border-[#FAFAFA] bg-gray-100 flex items-center justify-center z-30 overflow-hidden shadow-sm"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix&backgroundColor=b6e3f4" alt="avatar" className="w-full h-full object-cover" /></div>
-               <div className="w-9 h-9 rounded-full border-[2px] border-[#FAFAFA] bg-gray-100 flex items-center justify-center z-20 overflow-hidden shadow-sm"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka&backgroundColor=c0aede" alt="avatar" className="w-full h-full object-cover" /></div>
-               <div className="w-9 h-9 rounded-full border-[2px] border-[#FAFAFA] bg-gray-100 flex items-center justify-center z-10 overflow-hidden shadow-sm"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Jocelyn&backgroundColor=d1d4f9" alt="avatar" className="w-full h-full object-cover" /></div>
-             </div>
-             <span className="text-[13px] sm:text-[14px] font-medium text-brand-text/80 text-left leading-tight">
-               Tus colegas de Diseño UX ya están colaborando.
-             </span>
+            <div className="flex -space-x-2.5 shrink-0 pl-1">
+              <div className="w-9 h-9 rounded-full border-[2px] border-[#FAFAFA] bg-gray-100 flex items-center justify-center z-30 overflow-hidden shadow-sm"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix&backgroundColor=b6e3f4" alt="avatar" className="w-full h-full object-cover" /></div>
+              <div className="w-9 h-9 rounded-full border-[2px] border-[#FAFAFA] bg-gray-100 flex items-center justify-center z-20 overflow-hidden shadow-sm"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka&backgroundColor=c0aede" alt="avatar" className="w-full h-full object-cover" /></div>
+              <div className="w-9 h-9 rounded-full border-[2px] border-[#FAFAFA] bg-gray-100 flex items-center justify-center z-10 overflow-hidden shadow-sm"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Jocelyn&backgroundColor=d1d4f9" alt="avatar" className="w-full h-full object-cover" /></div>
+            </div>
+            <span className="text-[13px] sm:text-[14px] font-medium text-brand-text/80 text-left leading-tight">
+              Tus colegas de Diseño UX ya están colaborando.
+            </span>
           </div>
 
           <Button
@@ -367,7 +369,7 @@ export function OnboardingFlow() {
             Invitar y continuar
           </Button>
 
-          <button 
+          <button
             onClick={() => handleInvite(true)}
             disabled={isPending}
             className="text-[11px] uppercase font-bold tracking-widest text-[#9ca3af] hover:text-brand-text transition-colors"
@@ -395,8 +397,8 @@ export function OnboardingFlow() {
               <Label className="text-[10px] uppercase font-bold tracking-widest text-brand-text mb-1 block">
                 NOMBRE DEL PROYECTO
               </Label>
-              <Input 
-                className="bg-transparent border-t-0 border-l-0 border-r-0 border-b border-brand-border rounded-none h-10 px-0 outline-none focus-visible:ring-0 focus-visible:border-brand-primary shadow-none text-[15px] font-medium placeholder:font-normal placeholder:opacity-50" 
+              <Input
+                className="bg-transparent border-t-0 border-l-0 border-r-0 border-b border-brand-border rounded-none h-10 px-0 outline-none focus-visible:ring-0 focus-visible:border-brand-primary shadow-none text-[15px] font-medium placeholder:font-normal placeholder:opacity-50"
                 placeholder="Rediseño app"
                 value={projectName}
                 onChange={(e) => setProjectName(e.target.value)}
@@ -408,8 +410,8 @@ export function OnboardingFlow() {
               <Label className="text-[10px] uppercase font-bold tracking-widest text-brand-text mb-1 block">
                 DESCRIPCIÓN (OPCIONAL)
               </Label>
-              <Input 
-                className="bg-transparent border-t-0 border-l-0 border-r-0 border-b border-brand-border rounded-none h-10 px-0 outline-none focus-visible:ring-0 focus-visible:border-brand-primary shadow-none text-[15px] font-medium placeholder:font-normal placeholder:opacity-50" 
+              <Input
+                className="bg-transparent border-t-0 border-l-0 border-r-0 border-b border-brand-border rounded-none h-10 px-0 outline-none focus-visible:ring-0 focus-visible:border-brand-primary shadow-none text-[15px] font-medium placeholder:font-normal placeholder:opacity-50"
                 placeholder="¿De qué se trata este proyecto?"
                 value={projectDescription}
                 onChange={(e) => setProjectDescription(e.target.value)}
@@ -431,9 +433,8 @@ export function OnboardingFlow() {
                 ].map((color) => (
                   <button
                     key={color.id}
-                    className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${
-                      projectColor === color.hex ? "ring-2 ring-offset-2 ring-brand-text" : "hover:scale-110"
-                    }`}
+                    className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${projectColor === color.hex ? "ring-2 ring-offset-2 ring-brand-text" : "hover:scale-110"
+                      }`}
                     style={{ backgroundColor: color.hex }}
                     onClick={() => setProjectColor(color.hex)}
                   >

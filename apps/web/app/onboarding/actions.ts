@@ -1,7 +1,7 @@
 "use server"
 
 import { redirect } from "next/navigation"
-import { headers } from "next/headers"
+import { headers, cookies } from "next/headers"
 import { z } from "zod"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
@@ -189,6 +189,9 @@ export async function createFirstProject(formData: FormData) {
       },
       select: { id: true },
     })
+
+    const cookieStore = await cookies()
+    cookieStore.set("active_project_id", project.id, { path: "/" })
 
     return { projectId: project.id }
   } catch {
