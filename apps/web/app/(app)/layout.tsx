@@ -136,6 +136,7 @@ export default async function AppLayout({
         tasks: col.tasks.map((task) => ({
           id: task.id,
           title: task.title,
+          description: task.description || undefined,
           priority: priorityMap[task.priority] || "media",
           dateInfo: task.dueDate
             ? {

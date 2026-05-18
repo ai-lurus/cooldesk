@@ -6,6 +6,7 @@ import { type Priority, type Assignee } from "./kanban-card"
 export type Task = {
   id: string
   title: string
+  description?: string
   priority: Priority
   dateInfo?: { text: string; isToday?: boolean; isOverdue?: boolean }
   assignee?: Assignee
@@ -94,6 +95,7 @@ const initialColumns: ColumnData[] = [
 type KanbanContextType = {
   columns: ColumnData[]
   addTask: (columnId: string, task: Task) => void
+  updateTask: (taskId: string, updatedTask: Partial<Task>) => void
 }
 
 const KanbanContext = createContext<KanbanContextType | undefined>(undefined)
@@ -127,8 +129,19 @@ export function KanbanProvider({
     )
   }
 
+  const updateTask = (taskId: string, updatedFields: Partial<Task>) => {
+    setColumns((prevColumns) =>
+      prevColumns.map((col) => ({
+        ...col,
+        tasks: col.tasks.map((task) =>
+          task.id === taskId ? { ...task, ...updatedFields } : task
+        ),
+      }))
+    )
+  }
+
   return (
-    <KanbanContext.Provider value={{ columns, addTask }}>
+    <KanbanContext.Provider value={{ columns, addTask, updateTask }}>
       {children}
     </KanbanContext.Provider>
   )

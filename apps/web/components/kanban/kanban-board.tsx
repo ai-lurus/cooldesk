@@ -12,7 +12,7 @@ export function KanbanBoard() {
       {columns.map((col) => (
         <KanbanColumn key={col.id} id={col.id} title={col.title} count={col.tasks.length}>
           {col.tasks.map((task) => (
-            <KanbanCard key={task.id} {...task} />
+            <KanbanCard key={task.id} {...task} columnId={col.id} />
           ))}
         </KanbanColumn>
       ))}

@@ -87,3 +87,53 @@ export async function createTask(data: {
   
   return { success: true, task: newTask }
 }
+
+export async function updateTask(data: {
+  id: string
+  title?: string
+  description?: string
+  columnId?: string
+  priority?: string
+  dueDate?: string | null
+  assigneeId?: string | null
+}) {
+  const session = await auth.api.getSession({
+    headers: await headers()
+  })
+
+  if (!session?.user) {
+    throw new Error("Unauthorized")
+  }
+
+  // Map Spanish priority strings to Prisma TaskPriority enum
+  const priorityMap: Record<string, TaskPriority> = {
+    urgente: TaskPriority.urgent,
+    alta: TaskPriority.high,
+    media: TaskPriority.medium,
+    baja: TaskPriority.low,
+  }
+
+  const updateData: Record<string, unknown> = {}
+
+  if (data.title !== undefined) updateData.title = data.title
+  if (data.description !== undefined) updateData.description = data.description
+  if (data.columnId !== undefined) updateData.columnId = data.columnId
+  if (data.priority !== undefined) updateData.priority = priorityMap[data.priority] || TaskPriority.medium
+  if (data.dueDate !== undefined) updateData.dueDate = data.dueDate ? new Date(data.dueDate) : null
+  if (data.assigneeId !== undefined) updateData.assignedTo = data.assigneeId || null
+
+  const updatedTask = await db.task.update({
+    where: { id: data.id },
+    data: updateData,
+    include: {
+      assignee: {
+        select: { id: true, name: true }
+      }
+    }
+  })
+
+  revalidatePath("/")
+  revalidatePath("/projects")
+
+  return { success: true, task: updatedTask }
+}
