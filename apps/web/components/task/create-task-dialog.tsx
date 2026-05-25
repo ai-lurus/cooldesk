@@ -30,6 +30,8 @@ export function CreateTaskDialog({ open, onOpenChange }: CreateTaskDialogProps) 
   const { columns, addTask } = useKanbanContext()
   const [isSubmitting, setIsSubmitting] = useState(false)
 
+  const defaultColumn = columns.find(c => c.title.toLowerCase() === "sin iniciar")?.id || columns[0]?.id || "";
+
   const {
     register,
     handleSubmit,
@@ -40,7 +42,7 @@ export function CreateTaskDialog({ open, onOpenChange }: CreateTaskDialogProps) 
     resolver: zodResolver(taskSchema),
     defaultValues: {
       priority: "urgente",
-      columnId: "sin_iniciar",
+      columnId: defaultColumn,
       assigneeId: "",
       description: "",
       dueDate: "",

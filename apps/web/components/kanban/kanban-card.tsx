@@ -5,6 +5,8 @@ import { cn } from "@/lib/utils"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { TaskDetailsDialog } from "@/components/task/task-details-dialog"
 import type { Task } from "@/components/kanban/kanban-context"
+import { useSortable } from "@dnd-kit/sortable"
+import { CSS } from "@dnd-kit/utilities"
 
 export type Priority = "baja" | "media" | "alta" | "urgente"
 export type TaskStatus = "sin_iniciar" | "en_progreso" | "bloqueado" | "hecho"
@@ -78,11 +80,50 @@ export function KanbanCard({ id, title, description, priority, dateInfo, assigne
     assignee,
   }
 
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id,
+    data: {
+      type: "Task",
+      task: taskForDialog,
+    }
+  })
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  }
+
+  // When dragging, we can show a placeholder or let DragOverlay handle the visual
+  // Here we just lower opacity for the original item in the list
+  if (isDragging) {
+    return (
+      <div 
+        ref={setNodeRef}
+        style={style}
+        className="bg-gray-50 border-2 border-dashed border-gray-200 rounded-xl p-4 h-[120px] opacity-40" 
+      />
+    )
+  }
+
   return (
     <>
       <div
+        ref={setNodeRef}
+        style={style}
+        {...attributes}
+        {...listeners}
         onClick={() => setIsDialogOpen(true)}
-        className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex flex-col gap-3 cursor-pointer hover:shadow-md transition-shadow"
+        className={cn(
+          "bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex flex-col gap-3 cursor-grab hover:shadow-md transition-shadow active:cursor-grabbing",
+          isDragging && "opacity-50"
+        )}
       >
         <div className="flex justify-between items-start">
           <span

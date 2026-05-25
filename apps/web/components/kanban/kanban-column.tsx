@@ -1,4 +1,6 @@
 import { Plus } from "lucide-react"
+import { useDroppable } from "@dnd-kit/core"
+import { cn } from "@/lib/utils"
 
 export interface KanbanColumnProps {
   id: string
@@ -7,7 +9,11 @@ export interface KanbanColumnProps {
   children?: React.ReactNode
 }
 
-export function KanbanColumn({ title, count, children }: KanbanColumnProps) {
+export function KanbanColumn({ id, title, count, children }: KanbanColumnProps) {
+  const { setNodeRef, isOver } = useDroppable({
+    id: id,
+  })
+
   return (
     <div className="flex flex-col w-[280px] shrink-0">
       <div className="flex items-center justify-between mb-4 px-1">
@@ -24,7 +30,13 @@ export function KanbanColumn({ title, count, children }: KanbanColumnProps) {
         </button>
       </div>
       
-      <div className="flex flex-col gap-3 min-h-[150px] rounded-lg">
+      <div 
+        ref={setNodeRef} 
+        className={cn(
+          "flex flex-col gap-3 min-h-[150px] rounded-lg transition-colors p-1 -mx-1",
+          isOver && "bg-gray-50/50"
+        )}
+      >
         {children}
         
         {/* Helper text for empty "Hecho" column based on mockup */}

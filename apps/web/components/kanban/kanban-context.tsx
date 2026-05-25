@@ -96,6 +96,7 @@ type KanbanContextType = {
   columns: ColumnData[]
   addTask: (columnId: string, task: Task) => void
   updateTask: (taskId: string, updatedTask: Partial<Task>) => void
+  moveTask: (activeId: string, overId: string, activeColId: string, overColId: string) => void
 }
 
 const KanbanContext = createContext<KanbanContextType | undefined>(undefined)
@@ -140,8 +141,58 @@ export function KanbanProvider({
     )
   }
 
+  const moveTask = (activeId: string, overId: string, activeColId: string, overColId: string) => {
+    setColumns((prevColumns) => {
+      const activeColIndex = prevColumns.findIndex((col) => col.id === activeColId)
+      const overColIndex = prevColumns.findIndex((col) => col.id === overColId)
+      
+      if (activeColIndex === -1 || overColIndex === -1) return prevColumns
+
+      const activeCol = prevColumns[activeColIndex]
+      const overCol = prevColumns[overColIndex]
+
+      const activeTaskIndex = activeCol.tasks.findIndex((t) => t.id === activeId)
+      const overTaskIndex = overId === overColId 
+        ? overCol.tasks.length 
+        : overCol.tasks.findIndex((t) => t.id === overId)
+
+      if (activeTaskIndex === -1) return prevColumns
+
+      const newColumns = [...prevColumns]
+      const task = activeCol.tasks[activeTaskIndex]
+
+      if (activeColId === overColId) {
+        // Moving within the same column
+        const newTasks = [...activeCol.tasks]
+        newTasks.splice(activeTaskIndex, 1)
+        newTasks.splice(overTaskIndex, 0, task)
+        newColumns[activeColIndex] = { ...activeCol, tasks: newTasks }
+      } else {
+        // Moving to a different column
+        const newActiveTasks = [...activeCol.tasks]
+        newActiveTasks.splice(activeTaskIndex, 1)
+        
+        const newOverTasks = [...overCol.tasks]
+        // If dropping on an empty column or at the end
+        if (overId === overColId) {
+            newOverTasks.push(task)
+        } else {
+            // Adjust index if we are dropping after the item
+            const isBelowOverItem = overTaskIndex >= 0 && activeTaskIndex < overTaskIndex
+            const modifier = isBelowOverItem ? 1 : 0
+            newOverTasks.splice(overTaskIndex >= 0 ? overTaskIndex + modifier : newOverTasks.length, 0, task)
+        }
+
+        newColumns[activeColIndex] = { ...activeCol, tasks: newActiveTasks }
+        newColumns[overColIndex] = { ...overCol, tasks: newOverTasks }
+      }
+
+      return newColumns
+    })
+  }
+
   return (
-    <KanbanContext.Provider value={{ columns, addTask, updateTask }}>
+    <KanbanContext.Provider value={{ columns, addTask, updateTask, moveTask }}>
       {children}
     </KanbanContext.Provider>
   )
