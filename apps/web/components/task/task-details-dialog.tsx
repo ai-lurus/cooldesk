@@ -17,6 +17,7 @@ const taskSchema = z.object({
   columnId: z.string(),
   dueDate: z.string().optional(),
   priority: z.enum(["baja", "media", "alta", "urgente"]),
+  assigneeId: z.string().optional(),
 })
 
 type TaskFormValues = z.infer<typeof taskSchema>
@@ -37,7 +38,7 @@ const priorityConfig: Record<Priority, { label: string; bg: string; text: string
 }
 
 export function TaskDetailsDialog({ open, onOpenChange, task, columnId }: TaskDetailsDialogProps) {
-  const { columns, updateTask } = useKanbanContext()
+  const { columns, members, updateTask } = useKanbanContext()
   const [isEditing, setIsEditing] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -46,6 +47,7 @@ export function TaskDetailsDialog({ open, onOpenChange, task, columnId }: TaskDe
     handleSubmit,
     control,
     reset,
+    watch,
     formState: { errors },
   } = useForm<TaskFormValues>({
     resolver: zodResolver(taskSchema),
@@ -53,8 +55,9 @@ export function TaskDetailsDialog({ open, onOpenChange, task, columnId }: TaskDe
       title: task.title,
       description: task.description || "",
       columnId: columnId,
-      dueDate: "",
+      dueDate: task.dueDate || "",
       priority: task.priority,
+      assigneeId: task.assignee?.id || "",
     },
   })
 
@@ -63,8 +66,9 @@ export function TaskDetailsDialog({ open, onOpenChange, task, columnId }: TaskDe
       title: task.title,
       description: task.description || "",
       columnId: columnId,
-      dueDate: "",
+      dueDate: task.dueDate || "",
       priority: task.priority,
+      assigneeId: task.assignee?.id || "",
     })
     setIsEditing(true)
   }
@@ -85,28 +89,40 @@ export function TaskDetailsDialog({ open, onOpenChange, task, columnId }: TaskDe
         columnId: data.columnId,
         priority: data.priority,
         dueDate: data.dueDate || null,
+        assigneeId: data.assigneeId || null,
       })
 
       if (result.success) {
         // Build dateInfo from the server result
         const updatedDueDate = result.task.dueDate
         let dateInfo = task.dateInfo
+        let dueDate = task.dueDate
+
         if (updatedDueDate) {
-          const d = new Date(updatedDueDate)
+          const isoString = new Date(updatedDueDate).toISOString().split('T')[0];
+          dueDate = isoString;
+          const [year, month, day] = isoString.split('-');
+          const localDate = new Date(Number(year), Number(month) - 1, Number(day));
+
           dateInfo = {
-            text: d.toLocaleDateString("es-MX", { day: "numeric", month: "short" }),
-            isOverdue: d < new Date(new Date().setHours(0, 0, 0, 0)),
-            isToday: d.toDateString() === new Date().toDateString(),
+            text: localDate.toLocaleDateString("es-MX", { day: "numeric", month: "short" }),
+            isOverdue: localDate < new Date(new Date().setHours(0, 0, 0, 0)),
+            isToday: localDate.toDateString() === new Date().toDateString(),
           }
-        } else if (data.dueDate === "") {
-          // Keep existing if no change was made
+        } else if (!data.dueDate) {
+          dateInfo = undefined
+          dueDate = undefined
         }
+
+        const selectedMember = data.assigneeId ? members.find(m => m.id === data.assigneeId) : undefined
 
         updateTask(task.id, {
           title: data.title,
           description: data.description,
           priority: data.priority as Priority,
-          ...(updatedDueDate ? { dateInfo } : {}),
+          assignee: selectedMember,
+          dateInfo,
+          dueDate,
         })
       }
 
@@ -124,6 +140,9 @@ export function TaskDetailsDialog({ open, onOpenChange, task, columnId }: TaskDe
     }
     onOpenChange(open)
   }
+
+  const selectedAssigneeId = watch("assigneeId")
+  const selectedAssignee = members.find(m => m.id === selectedAssigneeId)
 
   const pConfig = priorityConfig[task.priority]
 
@@ -341,6 +360,45 @@ export function TaskDetailsDialog({ open, onOpenChange, task, columnId }: TaskDe
                       </button>
                     )
                   })}
+                </div>
+              )}
+            />
+          </div>
+
+          {/* Assignee */}
+          <div className="flex flex-col gap-3 mt-2">
+            <label className="text-[11px] font-bold text-gray-600 uppercase tracking-wider">
+              ASIGNAR A
+            </label>
+            <Controller
+              name="assigneeId"
+              control={control}
+              render={({ field }) => (
+                <div className="relative">
+                  <select
+                    className={`w-full bg-white border border-transparent focus:border-brand-primary/30 rounded-xl py-3 text-[14px] outline-none focus:ring-4 focus:ring-brand-primary/10 transition-all font-medium text-gray-800 appearance-none shadow-sm pr-10 ${selectedAssignee ? 'pl-10' : 'pl-4'}`}
+                    value={field.value || ""}
+                    onChange={(e) => field.onChange(e.target.value)}
+                  >
+                    <option value="">Sin asignar</option>
+                    {members.map(member => (
+                      <option key={member.id} value={member.id}>
+                        {member.name}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                  
+                  {selectedAssignee && (
+                    <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none flex items-center gap-2">
+                      <div
+                        className="w-6 h-6 rounded-full flex items-center justify-center text-white text-[10px] font-bold"
+                        style={{ backgroundColor: selectedAssignee.color }}
+                      >
+                        {selectedAssignee.initials}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             />

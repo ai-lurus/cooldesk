@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { Calendar, ChevronDown, Info } from "lucide-react"
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
-import { useKanbanContext, mockAssignees } from "@/components/kanban/kanban-context"
+import { useKanbanContext } from "@/components/kanban/kanban-context"
 import type { Priority } from "@/components/kanban/kanban-card"
 import { createTask } from "@/app/actions/task"
 
@@ -27,7 +27,7 @@ interface CreateTaskDialogProps {
 }
 
 export function CreateTaskDialog({ open, onOpenChange }: CreateTaskDialogProps) {
-  const { columns, addTask } = useKanbanContext()
+  const { columns, members, addTask } = useKanbanContext()
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const defaultColumn = columns.find(c => c.title.toLowerCase() === "sin iniciar")?.id || columns[0]?.id || "";
@@ -36,7 +36,7 @@ export function CreateTaskDialog({ open, onOpenChange }: CreateTaskDialogProps) 
     register,
     handleSubmit,
     control,
-    reset,
+    watch,
     formState: { errors },
   } = useForm<TaskFormValues>({
     resolver: zodResolver(taskSchema),
@@ -63,12 +63,25 @@ export function CreateTaskDialog({ open, onOpenChange }: CreateTaskDialogProps) 
       })
 
       if (result.success && result.task) {
+        let dateInfo = undefined;
+        if (data.dueDate) {
+          const [year, month, day] = data.dueDate.split('-');
+          const localDate = new Date(Number(year), Number(month) - 1, Number(day));
+          dateInfo = {
+            text: localDate.toLocaleDateString("es-MX", { day: "numeric", month: "short" }),
+            isOverdue: localDate < new Date(new Date().setHours(0, 0, 0, 0)),
+            isToday: localDate.toDateString() === new Date().toDateString(),
+          };
+        }
+
+        const selectedMember = members.find(m => m.id === data.assigneeId)
         const newTask = {
           id: result.task.id,
           title: result.task.title,
           priority: data.priority as Priority,
-          assignee: data.assigneeId ? mockAssignees[data.assigneeId] : undefined,
-          dateInfo: data.dueDate ? { text: data.dueDate, isToday: false } : undefined,
+          assignee: selectedMember,
+          dateInfo,
+          dueDate: data.dueDate,
         }
         addTask(data.columnId, newTask)
       }
@@ -82,8 +95,8 @@ export function CreateTaskDialog({ open, onOpenChange }: CreateTaskDialogProps) 
     }
   }
 
-  // Selected assignees mock for the UI (using all 3 to match the design)
-  const selectedAssignees = Object.values(mockAssignees)
+  const selectedAssigneeId = watch("assigneeId");
+  const selectedAssignee = members.find(m => m.id === selectedAssigneeId);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -217,28 +230,43 @@ export function CreateTaskDialog({ open, onOpenChange }: CreateTaskDialogProps) 
                 <label className="text-[11px] font-bold text-gray-600 uppercase tracking-wider">
                   ASIGNAR A
                 </label>
-                <div className="flex items-center gap-3">
-                  <div className="flex -space-x-2">
-                    {selectedAssignees.map((assignee) => (
-                      <div
-                        key={assignee.id}
-                        className="w-10 h-10 rounded-full border-2 border-white flex items-center justify-center text-white text-xs font-bold"
-                        style={{ backgroundColor: assignee.color }}
+                <Controller
+                  name="assigneeId"
+                  control={control}
+                  render={({ field }) => (
+                    <div className="relative">
+                      <select
+                        className="w-full bg-white border border-transparent focus:border-brand-primary/30 rounded-xl py-3 px-4 text-[14px] outline-none focus:ring-4 focus:ring-brand-primary/10 transition-all font-medium text-gray-800 appearance-none shadow-sm pr-10"
+                        value={field.value || ""}
+                        onChange={(e) => field.onChange(e.target.value)}
                       >
-                        {assignee.initials}
-                      </div>
-                    ))}
-                    <div className="w-10 h-10 rounded-full border-2 border-dashed border-gray-300 bg-white flex items-center justify-center text-gray-400 cursor-pointer hover:border-gray-400 transition-colors">
-                      <span className="text-lg">+</span>
+                        <option value="">Sin asignar</option>
+                        {members.map(member => (
+                          <option key={member.id} value={member.id}>
+                            {member.name}
+                          </option>
+                        ))}
+                      </select>
+                      <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                      
+                      {/* Avatar Display Overlay (Optional visual enhancement) */}
+                      {selectedAssignee && (
+                        <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none flex items-center gap-2">
+                          <div
+                            className="w-6 h-6 rounded-full flex items-center justify-center text-white text-[10px] font-bold"
+                            style={{ backgroundColor: selectedAssignee.color }}
+                          >
+                            {selectedAssignee.initials}
+                          </div>
+                        </div>
+                      )}
+                      {/* Adjust padding if we show avatar */}
+                      <style dangerouslySetInnerHTML={{__html: `
+                        select { padding-left: ${selectedAssignee ? '2.5rem' : '1rem'} !important; }
+                      `}} />
                     </div>
-                  </div>
-                  <span className="text-gray-500 font-medium text-sm ml-2">
-                    {selectedAssignees.length} miembros seleccionados
-                  </span>
-
-                  {/* Hidden input to store value if we needed to hook it up to RHF */}
-                  <input type="hidden" {...register("assigneeId")} value="JR" />
-                </div>
+                  )}
+                />
               </div>
 
               {/* Submit Button */}

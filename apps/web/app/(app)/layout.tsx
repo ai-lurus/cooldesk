@@ -70,6 +70,8 @@ export default async function AppLayout({
   let initialColumnsData = undefined
   let activeProjectName = projects.find(p => p.id === targetProjectId)?.name || ""
 
+  let initialMembersData: any[] = []
+
   if (workspace && projects.length > 0) {
     let firstProject = await db.project.findFirst({
       where: { id: targetProjectId, workspaceId: workspace.id },
@@ -133,29 +135,61 @@ export default async function AppLayout({
       initialColumnsData = firstProject.columns.map((col) => ({
         id: col.id,
         title: col.name.toUpperCase(),
-        tasks: col.tasks.map((task) => ({
-          id: task.id,
-          title: task.title,
-          description: task.description || undefined,
-          priority: priorityMap[task.priority] || "media",
-          dateInfo: task.dueDate
-            ? {
-                text: new Date(task.dueDate).toLocaleDateString("es-MX", { day: "numeric", month: "short" }),
-                isOverdue: new Date(task.dueDate) < new Date(new Date().setHours(0, 0, 0, 0)),
-                isToday: new Date(task.dueDate).toDateString() === new Date().toDateString(),
-              }
-            : undefined,
-          assignee: task.assignee
-            ? {
-                id: task.assignee.id,
-                name: task.assignee.name,
-                initials: task.assignee.name.substring(0, 2).toUpperCase(),
-                color: "#F97316", // Default color as user doesn't have a color field in DB yet
-              }
-            : undefined,
-        })),
+        tasks: col.tasks.map((task) => {
+          let dateInfo = undefined;
+          let dueDate = undefined;
+          
+          if (task.dueDate) {
+            const isoString = new Date(task.dueDate).toISOString().split('T')[0];
+            dueDate = isoString;
+            const [year, month, day] = isoString.split('-');
+            const localDate = new Date(Number(year), Number(month) - 1, Number(day));
+            
+            dateInfo = {
+              text: localDate.toLocaleDateString("es-MX", { day: "numeric", month: "short" }),
+              isOverdue: localDate < new Date(new Date().setHours(0, 0, 0, 0)),
+              isToday: localDate.toDateString() === new Date().toDateString(),
+            };
+          }
+
+          return {
+            id: task.id,
+            title: task.title,
+            description: task.description || undefined,
+            priority: priorityMap[task.priority] || "media",
+            dueDate: dueDate,
+            dateInfo: dateInfo,
+            assignee: task.assignee
+              ? {
+                  id: task.assignee.id,
+                  name: task.assignee.name,
+                  initials: task.assignee.name.substring(0, 2).toUpperCase(),
+                  color: "#F97316", // Default color as user doesn't have a color field in DB yet
+                }
+              : undefined,
+          };
+        }),
       }))
     }
+
+    const membersData = await db.workspaceMember.findMany({
+      where: { workspaceId: workspace.id },
+      include: {
+        user: {
+          select: { id: true, name: true, image: true, email: true }
+        }
+      }
+    })
+
+    const colors = ["#F97316", "#10B981", "#F59E0B", "#3B82F6", "#8B5CF6", "#EC4899"];
+    initialMembersData = membersData.map((m, index) => ({
+      id: m.user.id,
+      name: m.user.name,
+      initials: m.user.name.substring(0, 2).toUpperCase(),
+      color: colors[index % colors.length],
+      email: m.user.email,
+      image: m.user.image,
+    }))
   }
 
   const userDisplay = {
@@ -176,7 +210,7 @@ export default async function AppLayout({
       ) : null}
 
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        <KanbanProvider initialColumnsData={initialColumnsData}>
+        <KanbanProvider initialColumnsData={initialColumnsData} initialMembers={initialMembersData}>
           <Header />
           <main className="flex-1 overflow-y-auto px-6 pb-6">{children}</main>
         </KanbanProvider>

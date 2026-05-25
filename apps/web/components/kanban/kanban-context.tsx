@@ -9,8 +9,12 @@ export type Task = {
   description?: string
   priority: Priority
   dateInfo?: { text: string; isToday?: boolean; isOverdue?: boolean }
+  dueDate?: string
   assignee?: Assignee
 }
+
+export type KanbanMember = Assignee & { email?: string, image?: string | null }
+
 
 export type ColumnData = {
   id: string
@@ -94,6 +98,7 @@ const initialColumns: ColumnData[] = [
 
 type KanbanContextType = {
   columns: ColumnData[]
+  members: KanbanMember[]
   addTask: (columnId: string, task: Task) => void
   updateTask: (taskId: string, updatedTask: Partial<Task>) => void
   moveTask: (activeId: string, overId: string, activeColId: string, overColId: string) => void
@@ -103,18 +108,27 @@ const KanbanContext = createContext<KanbanContextType | undefined>(undefined)
 
 export function KanbanProvider({ 
   children,
-  initialColumnsData
+  initialColumnsData,
+  initialMembers = []
 }: { 
   children: ReactNode,
-  initialColumnsData?: ColumnData[]
+  initialColumnsData?: ColumnData[],
+  initialMembers?: KanbanMember[]
 }) {
   const [columns, setColumns] = useState<ColumnData[]>(initialColumnsData || initialColumns)
+  const [members, setMembers] = useState<KanbanMember[]>(initialMembers)
 
   useEffect(() => {
     if (initialColumnsData) {
       setColumns(initialColumnsData)
     }
   }, [initialColumnsData])
+
+  useEffect(() => {
+    if (initialMembers.length > 0) {
+      setMembers(initialMembers)
+    }
+  }, [initialMembers])
 
   const addTask = (columnId: string, task: Task) => {
     setColumns((prevColumns) =>
@@ -192,7 +206,7 @@ export function KanbanProvider({
   }
 
   return (
-    <KanbanContext.Provider value={{ columns, addTask, updateTask, moveTask }}>
+    <KanbanContext.Provider value={{ columns, members, addTask, updateTask, moveTask }}>
       {children}
     </KanbanContext.Provider>
   )

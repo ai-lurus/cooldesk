@@ -28,11 +28,12 @@ export interface KanbanCardProps {
     isOverdue?: boolean
     isToday?: boolean
   }
+  dueDate?: string
   assignee?: Assignee
   columnId: string
 }
 
-export function KanbanCard({ id, title, description, priority, dateInfo, assignee, columnId }: KanbanCardProps) {
+export function KanbanCard({ id, title, description, priority, dateInfo, dueDate, assignee, columnId }: KanbanCardProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
 
   // Priority styles
@@ -77,6 +78,7 @@ export function KanbanCard({ id, title, description, priority, dateInfo, assigne
     description,
     priority,
     dateInfo,
+    dueDate,
     assignee,
   }
 
